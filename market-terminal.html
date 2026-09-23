@@ -1,0 +1,3331 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MarketTerminal | Thế giới và Việt Nam</title>
+  <style>
+    :root {
+      --bg: #050608;
+      --surface: #101216;
+      --surface-soft: #141922;
+      --surface-strong: #1c2129;
+      --surface-elevated: #1a2028;
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f5f7fa;
+      --text-strong: #ffffff;
+      --text-subtle: #9aa3b0;
+      --text-muted: #7f8794;
+      --muted: var(--text-subtle);
+      --up: #30d158;
+      --down: #ff453a;
+      --up-soft: rgba(48, 209, 88, 0.15);
+      --down-soft: rgba(255, 69, 58, 0.15);
+      --focus: rgba(255, 255, 255, 0.4);
+      --shadow-soft: 0 10px 34px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --radius-xs: 9px;
+      --radius-pill: 999px;
+      --page-pad: 16px;
+      --ticker-h: 46px;
+      --grid-gap: 14px;
+      --table-line: rgba(255, 255, 255, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: var(--page-pad);
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 16px;
+      background:
+        radial-gradient(980px 460px at 106% -50px, rgba(255, 255, 255, 0.08), transparent 52%),
+        radial-gradient(760px 380px at -70px 85%, rgba(255, 255, 255, 0.03), transparent 56%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "SF Pro Text", "SF Pro Display", BlinkMacSystemFont, sans-serif;
+      line-height: 1.4;
+      font-size: 14px;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    h1, h2, h3, p {
+      margin: 0;
+    }
+
+    .sidebar {
+      min-height: calc(100vh - var(--page-pad) * 2);
+      position: sticky;
+      top: var(--page-pad);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #11131a, #0d1015);
+      backdrop-filter: blur(8px);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      color: #070707;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.1px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      line-height: 1.12;
+      letter-spacing: -0.2px;
+    }
+
+    .brand p {
+      font-size: 12px;
+      margin-top: 3px;
+      color: var(--muted);
+    }
+
+    .nav {
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      flex: 1;
+    }
+
+    .nav button {
+      text-align: left;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      cursor: pointer;
+      padding: 10px 12px;
+      transition: background 180ms ease, border-color 180ms ease, transform 140ms ease;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .nav button:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .nav button.active {
+      border-color: rgba(255, 255, 255, 0.8);
+      background: #f5f5f7;
+      color: #080808;
+      font-weight: 600;
+      box-shadow: 0 10px 18px rgba(255, 255, 255, 0.2);
+    }
+
+    .side-section {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: #eef1f6;
+      font-size: 12px;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .section-text {
+      margin-top: 8px;
+      color: var(--muted);
+    }
+
+    .status-chip {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f5f5f6;
+      border-radius: var(--radius-pill);
+      min-height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: var(--page-pad);
+      z-index: 4;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #131822, #0f1319);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(10px);
+    }
+
+    .search-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-wrap .hint,
+    .card-sub,
+    .muted-row,
+    .news-meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    input,
+    select,
+    button,
+    .command,
+    .search {
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      min-height: 36px;
+      background: rgba(12, 14, 18, 0.72);
+      transition: border-color 160ms ease, background-color 160ms ease, transform 140ms ease;
+    }
+
+    .command {
+      min-width: 320px;
+      flex: 1;
+      padding: 9px 12px;
+      min-height: 36px;
+      background: rgba(255, 255, 255, 0.04);
+      font-size: 12px;
+    }
+
+    .search {
+      min-width: 220px;
+      min-height: 36px;
+      padding: 9px 12px;
+    }
+
+    input:focus,
+    select:focus,
+    button:focus,
+    .command:focus,
+    .search:focus {
+      border-color: rgba(255, 255, 255, 0.58);
+      outline: none;
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.16);
+    }
+
+    button {
+      cursor: pointer;
+      padding: 9px 12px;
+      white-space: nowrap;
+    }
+
+    button.primary {
+      background: #f5f5f7;
+      color: #080808;
+      border-color: rgba(255, 255, 255, 0.46);
+      font-weight: 600;
+    }
+
+    button.ghost {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.24);
+      color: var(--text);
+    }
+
+    .ghost[data-state="off"] {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.34);
+      color: #fff;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-inline {
+      border-radius: var(--radius-pill);
+      min-height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      padding: 6px 10px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .demo-tag {
+      margin-left: auto;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.06);
+      color: #f6f6f8;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 5px 10px;
+      white-space: nowrap;
+    }
+
+    .ticker {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      height: var(--ticker-h);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .ticker-inner {
+      height: 100%;
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      white-space: nowrap;
+      padding: 0 16px;
+      animation: ticker-scroll 32s linear infinite;
+      will-change: transform;
+    }
+
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: var(--grid-gap);
+    }
+
+    .col-4 { grid-column: span 4; }
+    .col-5 { grid-column: span 5; }
+    .col-6 { grid-column: span 6; }
+    .col-7 { grid-column: span 7; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    .logical-section {
+      grid-column: 1 / -1;
+      margin: 2px 2px 0;
+      padding-left: 2px;
+      color: var(--text-subtle);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 2px;
+    }
+
+    .logical-section::before,
+    .logical-section::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, var(--surface), var(--surface-soft));
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .card-header {
+      border-bottom: 1px solid var(--line);
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      color: var(--text-strong);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.12px;
+    }
+
+    .card-sub {
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .card-content,
+    .card-body {
+      min-height: 98px;
+      padding: 12px 14px 14px;
+      position: relative;
+    }
+
+    .chip {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.05);
+      color: #dee3ea;
+      font-size: 11px;
+      padding: 4px 10px;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .loading-state,
+    .error-state,
+    .empty-state {
+      min-height: 118px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card[data-state='loading'] .loading-state,
+    .card[data-state='error'] .error-state,
+    .card[data-state='empty'] .empty-state {
+      display: flex;
+    }
+
+    .card[data-state='loading'] .card-content,
+    .card[data-state='loading'] .card-body,
+    .card[data-state='error'] .card-content,
+    .card[data-state='error'] .card-body,
+    .card[data-state='empty'] .card-content,
+    .card[data-state='empty'] .card-body {
+      display: none;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 10px;
+      min-height: 74px;
+      transition: transform 140ms ease;
+    }
+
+    .metric:hover {
+      transform: translateY(-1px);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .metric-value {
+      margin-top: 4px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.14px;
+      color: var(--text);
+    }
+
+    .metric-delta {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .metric-title { font-size: 19px; }
+    .metric-subtitle { font-size: 17px; }
+
+    .dual,
+    .two-col,
+    .three-col {
+      display: grid;
+      gap: 10px;
+    }
+
+    .dual { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1.35fr 0.8fr; }
+    .three-col { grid-template-columns: 1.4fr 1fr 1fr; }
+
+    .mini-badge {
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(255, 255, 255, 0.08);
+      min-width: 54px;
+      padding: 4px 8px;
+      font-size: 11px;
+      line-height: 1.1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    .list-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      table-layout: fixed;
+    }
+
+    .list-table th,
+    .list-table td {
+      text-align: left;
+      border-bottom: 1px solid var(--table-line);
+      padding: 9px 10px;
+      vertical-align: middle;
+    }
+
+    .list-table th {
+      color: #eef3f8;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: rgba(255, 255, 255, 0.03);
+      letter-spacing: 0.2px;
+      position: sticky;
+      top: 0;
+    }
+
+    .list-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .ticker-input {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chip-heat {
+      min-height: 120px;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    }
+
+    .sector-card {
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+      padding: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: #e9eef8;
+    }
+
+    .heat-value {
+      margin-top: 4px;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      color: var(--text);
+    }
+
+    .chart-shell {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 8px;
+      background: var(--surface-elevated);
+    }
+
+    .chart-shell canvas {
+      width: 100%;
+      display: block;
+    }
+
+    #candlestickCanvas { height: 220px; }
+    #volumeCanvas { height: 120px; }
+    #pnlCanvas { height: 140px; }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .pill-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .allocation {
+      display: grid;
+      grid-template-columns: 1fr 170px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .donut {
+      width: 162px;
+      height: 162px;
+      border-radius: 50%;
+      position: relative;
+      margin: 10px auto;
+      background: conic-gradient(
+        #f5f5f7 0deg 104deg,
+        #8e8e93 104deg 170deg,
+        #545458 170deg 224deg,
+        #2d2f32 224deg 290deg,
+        #a1a1a5 290deg 360deg
+      );
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.45);
+    }
+
+    .donut::after {
+      content: '';
+      position: absolute;
+      inset: 22px;
+      border-radius: 50%;
+      background: var(--surface-strong);
+    }
+
+    .news-item {
+      border-radius: 11px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.035);
+      padding: 9px 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .compact-note {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .news-meta {
+      margin-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sentiment-positive { color: var(--up); }
+    .sentiment-neutral { color: #b0b5be; }
+    .sentiment-negative { color: var(--down); }
+
+    .footer-note {
+      border-radius: 14px;
+      border-top: 1px solid var(--line);
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 10px 12px;
+      background: var(--surface-strong);
+      grid-column: 1 / -1;
+    }
+
+    .table-scroll { overflow: auto; }
+    .text-center { text-align: center; }
+    .spacer-10 { height: 10px; }
+    .mt-8 { margin-top: 8px; }
+    .mt-10 { margin-top: 10px; }
+    .mt-12 { margin-top: 12px; }
+    .mb-6 { margin-bottom: 6px; }
+    .input-tight { width: 120px; }
+    .full-width { width: 100%; }
+    .field-space-top { margin-top: 4px; }
+    .section-label { margin-bottom: 6px; }
+    .layout-grid-3 { display: grid; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+
+    .up { color: var(--up); }
+    .down { color: var(--down); }
+
+    .positive-bg { background: var(--up-soft); }
+    .negative-bg { background: var(--down-soft); }
+
+    .provider-card select,
+    .provider-card input {
+      width: 100%;
+      min-width: auto;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .provider-card .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 1fr;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .muted-row { color: var(--muted); font-size: 12px; }
+
+    ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .section-subtitle {
+      margin-top: 6px;
+      color: var(--text-subtle);
+      font-size: 11px;
+      letter-spacing: 0.1px;
+    }
+
+    .module-chip-wrap {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .toolbar-label {
+      font-size: 11px;
+      color: var(--text-subtle);
+      margin-right: 4px;
+    }
+
+    .world-pulse { grid-column: span 12; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.95fr); gap: 18px; padding: 22px; border: 1px solid rgba(255,255,255,.18); background: linear-gradient(135deg, #f5f5f7, #d9dde4); color: #111318; border-radius: var(--radius); box-shadow: 0 18px 45px rgba(0,0,0,.22); }
+    .world-pulse .eyebrow, .world-pulse .muted-row, .world-pulse .section-subtitle { color: #5b616b; }
+    .world-pulse h2 { color: #111318; font-size: 28px; letter-spacing: -.04em; }
+    .pulse-score { display: flex; align-items: end; gap: 12px; margin: 18px 0 14px; }
+    .pulse-score strong { font-size: 54px; line-height: .9; letter-spacing: -.08em; }
+    .pulse-score span { padding-bottom: 5px; font-weight: 700; }
+    .pulse-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; align-content: start; }
+    .pulse-event { padding: 14px; border-radius: 14px; background: rgba(255,255,255,.55); border: 1px solid rgba(0,0,0,.09); }
+    .pulse-event strong { display: block; margin: 6px 0; font-size: 14px; }
+    .pulse-event p { color: #4c535e; font-size: 12px; }
+    .pulse-tag { display: inline-flex; border-radius: 999px; padding: 4px 8px; font-size: 10px; font-weight: 700; letter-spacing: .04em; background: #111318; color: #fff; }
+    .impact-chain { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; align-items: stretch; }
+    .impact-step { position: relative; padding: 12px; border: 1px solid var(--line); border-radius: 13px; background: rgba(255,255,255,.045); min-height: 92px; }
+    .impact-step:not(:last-child)::after { content: '→'; position: absolute; right: -13px; top: 34px; z-index: 1; color: var(--text-subtle); }
+    .impact-step small { color: var(--text-muted); display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+    .impact-step strong { display: block; margin-top: 8px; font-size: 13px; }
+    .source-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--text-muted); font-size: 11px; }
+    .source-badge { border: 1px solid var(--line); border-radius: 999px; padding: 3px 8px; color: var(--text-subtle); }
+    .confidence { color: var(--text); }
+    .stream-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .stream-controls select { min-width: 126px; }
+    .stream-item { display: grid; grid-template-columns: 76px minmax(0,1fr) auto; gap: 12px; padding: 13px 0; border-top: 1px solid var(--table-line); }
+    .stream-item:first-child { border-top: 0; }
+    .stream-time { color: var(--text-muted); font-size: 11px; }
+    .stream-item h3 { font-size: 13px; margin-bottom: 4px; }
+    .stream-item h3 a { color: inherit; text-decoration: none; }
+    .stream-item h3 a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .stream-item p { color: var(--text-subtle); font-size: 12px; }
+    .stream-status { margin-bottom: 10px; }
+    .impact-score { align-self: start; min-width: 54px; text-align: center; border: 1px solid var(--line); border-radius: 999px; padding: 4px 7px; font-size: 10px; color: var(--text-subtle); }
+    .impact-score.high { color: var(--text); border-color: rgba(255,255,255,.5); }
+    @media (max-width: 900px) { .world-pulse { grid-template-columns: 1fr; } .pulse-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .impact-chain { grid-template-columns: 1fr; } .impact-step:not(:last-child)::after { content: '↓'; right: auto; left: 50%; top: auto; bottom: -17px; } }
+    @media (max-width: 600px) { .pulse-grid { grid-template-columns: 1fr; } .stream-item { grid-template-columns: 1fr auto; } .stream-time { grid-column: 1 / -1; } }
+
+    body.compact-mode .card[data-priority='low'],
+    body.compact-mode .card[data-priority='mid'],
+    body.compact-mode .logical-section[data-priority='low'],
+    body.compact-mode .logical-section[data-priority='mid'],
+    body.compact-mode .nav button[data-priority='low'],
+    body.compact-mode .nav button[data-priority='mid'] {
+      display: none;
+    }
+
+    body.compact-mode .col-4,
+    body.compact-mode .col-5,
+    body.compact-mode .col-6,
+    body.compact-mode .col-7,
+    body.compact-mode .col-8,
+    body.compact-mode .col-12 {
+      grid-column: span 12 !important;
+    }
+
+    @media (max-width: 1400px) {
+      .status-chip {
+        width: auto;
+        font-size: 10px;
+      }
+
+      .col-4,
+      .col-5,
+      .col-6,
+      .col-7,
+      .col-8,
+      .col-12 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      body {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        order: 2;
+        position: static;
+        min-height: auto;
+      }
+
+      .main {
+        order: 1;
+      }
+
+      .topbar,
+      .toolbar,
+      .search-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .search-wrap .hint,
+      .toolbar .hint {
+        display: none;
+      }
+
+      .toolbar { justify-content: start; }
+    }
+
+    @media (max-width: 920px) {
+      .search {
+        min-width: 190px;
+      }
+      .command {
+        min-width: 220px;
+      }
+      body {
+        padding: 10px;
+      }
+
+      .dual,
+      .two-col,
+      .three-col,
+      .layout-grid-3,
+      .allocation {
+        grid-template-columns: 1fr;
+      }
+
+      .ticker-input {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-shell canvas {
+        height: auto;
+      }
+
+      .card-header,
+      .search-wrap {
+        padding: 12px 12px 11px;
+      }
+
+      .card-content,
+      .card-body {
+        padding: 10px 12px 12px;
+      }
+
+      .grid {
+        gap: 12px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .demo-tag {
+        width: 100%;
+        text-align: center;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        justify-content: stretch;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Apple-style information hierarchy: calm canvas, fewer competing surfaces. */
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-soft: #fbfbfd;
+      --surface-strong: #f0f0f2;
+      --surface-elevated: #ffffff;
+      --line: rgba(0, 0, 0, .09);
+      --text: #1d1d1f;
+      --text-strong: #050505;
+      --text-subtle: #6e6e73;
+      --text-muted: #86868b;
+      --muted: #6e6e73;
+      --focus: rgba(0, 0, 0, .45);
+      --shadow-soft: 0 8px 28px rgba(0, 0, 0, .06);
+      --table-line: rgba(0, 0, 0, .07);
+      --radius: 20px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      background: #f5f5f7;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(820px 420px at 84% -12%, rgba(255,255,255,.9), transparent 66%);
+      z-index: -1;
+    }
+
+    .sidebar,
+    .topbar,
+    .card,
+    .ticker {
+      background: rgba(255,255,255,.82);
+      border-color: rgba(0,0,0,.08);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(20px);
+    }
+
+    .sidebar { background: rgba(255,255,255,.72); box-shadow: 0 8px 28px rgba(0,0,0,.045); }
+    .brand { border-color: var(--line); }
+    .brand-logo { background: #1d1d1f; color: #fff; box-shadow: none; }
+    .brand h1, .card-title, .section-title { color: #1d1d1f; }
+    .brand p, .card-sub, .muted-row, .section-text { color: #6e6e73; }
+
+    .nav { gap: 3px; }
+    .nav button {
+      min-height: 34px;
+      border-color: transparent;
+      background: transparent;
+      color: #6e6e73;
+      padding: 8px 10px;
+    }
+    .nav button:hover { background: rgba(0,0,0,.045); border-color: transparent; color: #1d1d1f; }
+    .nav button.active { background: #1d1d1f; color: #fff; border-color: #1d1d1f; box-shadow: none; }
+
+    .topbar { padding: 12px 16px; }
+    .command, .search, select, input {
+      background: #f5f5f7;
+      border-color: rgba(0,0,0,.1);
+      color: #1d1d1f;
+    }
+    .command:focus, .search:focus, select:focus, input:focus { border-color: rgba(0,0,0,.4); box-shadow: 0 0 0 3px rgba(0,0,0,.08); }
+    button.ghost, .ghost { background: #f5f5f7; color: #1d1d1f; border-color: rgba(0,0,0,.1); }
+    button.ghost:hover, .ghost:hover { background: #e9e9eb; border-color: rgba(0,0,0,.16); }
+    button.primary, .primary { background: #1d1d1f; color: #fff; border-color: #1d1d1f; box-shadow: none; }
+
+    .ticker { border-radius: 14px; min-height: 40px; }
+    .ticker-inner { color: #6e6e73; }
+    .ticker-item { border-color: rgba(0,0,0,.08); }
+    .card { border-radius: 18px; box-shadow: 0 5px 22px rgba(0,0,0,.045); }
+    .card:hover { border-color: rgba(0,0,0,.16); box-shadow: 0 10px 30px rgba(0,0,0,.07); }
+    .card-header { padding-bottom: 13px; border-bottom-color: rgba(0,0,0,.07); }
+    .card-content { padding-top: 14px; }
+    .logical-section { color: #86868b; letter-spacing: .13em; font-size: 10px; text-transform: uppercase; }
+    .logical-section::before, .logical-section::after { background: rgba(0,0,0,.08); }
+
+    .world-pulse { color: #1d1d1f; border: 0; box-shadow: 0 14px 36px rgba(0,0,0,.10); background: linear-gradient(135deg, #1d1d1f 0%, #3b3b3d 100%); }
+    .world-pulse h2, .world-pulse .pulse-score strong { color: #fff; }
+    .world-pulse .eyebrow, .world-pulse .muted-row, .world-pulse .section-subtitle { color: rgba(255,255,255,.62); }
+    .world-pulse .pulse-event { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.14); }
+    .world-pulse .pulse-event strong, .world-pulse .pulse-event p { color: #fff; }
+    .world-pulse .pulse-event p { color: rgba(255,255,255,.66); }
+    .world-pulse .pulse-tag { background: #fff; color: #1d1d1f; }
+    .world-pulse .source-line, .world-pulse .source-badge, .world-pulse .confidence { color: rgba(255,255,255,.64); border-color: rgba(255,255,255,.18); }
+
+    .metric { background: #fbfbfd; border-color: rgba(0,0,0,.07); }
+    .metric:hover { background: #f0f0f2; border-color: rgba(0,0,0,.13); }
+    .metric-label { color: #86868b; }
+    .metric-value { color: #1d1d1f; }
+    .list-table th { color: #86868b; border-bottom-color: rgba(0,0,0,.09); }
+    .list-table td { border-bottom-color: rgba(0,0,0,.06); color: #1d1d1f; }
+    .list-table tr:hover td { background: #f5f5f7; }
+    .chip, .mini-badge, .source-badge, .impact-score { background: #f0f0f2; color: #6e6e73; border-color: rgba(0,0,0,.08); }
+    .loading-state, .empty-state, .error-state { background: #fbfbfd; border-color: rgba(0,0,0,.07); color: #6e6e73; }
+    .stream-item { border-top-color: rgba(0,0,0,.07); }
+    .stream-item h3 a { color: #1d1d1f; }
+    .stream-time, .stream-item p { color: #6e6e73; }
+
+    body.compact-mode .world-pulse { display: grid; }
+    body.compact-mode .card[data-priority='mid'], body.compact-mode .logical-section[data-priority='mid'] { display: none; }
+
+    /* Workspace-first shell: one decision context at a time. */
+    .workspace-heading { width: 100%; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 2px; }
+    .workspace-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.03em; color: #1d1d1f; }
+    .workspace-heading p { margin: 0; color: #86868b; font-size: 11px; }
+    .workspace-switcher { display: grid; gap: 3px; }
+    .workspace-switcher button { font: inherit; }
+    .toolbar-label, .compact-note, #toggleCompact { display: none !important; }
+    .grid > .logical-section { display: none !important; }
+    .workspace-item { display: none !important; }
+    body[data-workspace='today'] .workspace-item[data-workspace='today'],
+    body[data-workspace='market'] .workspace-item[data-workspace='market'],
+    body[data-workspace='research'] .workspace-item[data-workspace='research'],
+    body[data-workspace='portfolio'] .workspace-item[data-workspace='portfolio'] { display: block !important; }
+    body[data-workspace='today'] .world-pulse { display: grid !important; }
+    body[data-workspace='market'] .ticker { display: block; }
+    body:not([data-workspace='market']) .ticker { display: none; }
+    body[data-workspace='today'] .grid { gap: 16px; }
+    body[data-workspace='today'] #impact-map { box-shadow: none; background: transparent; border: 0; }
+    body[data-workspace='today'] #impact-map .card-header { display: none; }
+    body[data-workspace='today'] #impact-map .card-content { padding: 0; }
+    body[data-workspace='today'] .impact-step { background: #fff; min-height: 76px; }
+    body[data-workspace='today'] #summary, body[data-workspace='today'] #news { min-height: 0; }
+    body[data-workspace='today'] #news .stream-item:nth-of-type(n+6) { display: none; }
+    .workspace-empty { grid-column: 1 / -1; padding: 32px; color: #86868b; text-align: center; }
+    @media (max-width: 720px) {
+      .workspace-heading { align-items: flex-start; flex-direction: column; gap: 3px; }
+      body[data-workspace='today'] #macro-regime, body[data-workspace='today'] #vietnam-lens,
+      body[data-workspace='today'] #summary, body[data-workspace='today'] #news { grid-column: span 12; }
+    }
+
+    /* Layout correction after rendered desktop review. */
+    body { grid-template-columns: 220px minmax(0, 1fr); gap: 14px; padding: 14px; }
+    .sidebar { min-height: calc(100vh - 28px); padding: 12px; }
+    .brand { margin-bottom: 14px; }
+    .nav { flex: 0 0 auto; display: grid; grid-auto-rows: 38px; align-content: start; gap: 4px; }
+    .nav button, .nav button.active { width: 100%; height: 38px; min-height: 38px; align-self: start; }
+    .side-section { margin-top: auto; }
+
+    .topbar { grid-template-columns: minmax(0, 1fr) auto; padding: 14px 16px; align-items: end; }
+    .search-wrap { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(200px, 300px); gap: 9px; }
+    .workspace-heading { grid-column: 1 / -1; margin-bottom: 5px; }
+    .workspace-heading h2 { font-size: 20px; }
+    .search-wrap .hint { display: none; }
+    .toolbar { align-self: end; flex-wrap: nowrap; }
+    #simulateError { display: none; }
+    .demo-tag { white-space: nowrap; }
+
+    .world-pulse { grid-template-columns: minmax(250px, .8fr) minmax(0, 1.8fr); gap: 20px; padding: 20px; }
+    .world-pulse h2 { font-size: 26px; }
+    .pulse-score { margin: 12px 0 10px; }
+    .pulse-score strong { font-size: 46px; }
+    .world-pulse .pulse-score span { color: #fff; }
+    .world-pulse .source-badge { background: rgba(255,255,255,.08); color: rgba(255,255,255,.72); }
+    .pulse-event { padding: 12px; }
+    .pulse-event strong { margin: 7px 0 5px; }
+    .impact-step { min-height: 68px; padding: 10px 12px; }
+    .impact-step strong { margin-top: 5px; }
+    body[data-workspace='today'] #impact-map .source-line { margin-top: 8px !important; }
+
+    @media (max-width: 1120px) {
+      body { grid-template-columns: 190px minmax(0, 1fr); }
+      .topbar { grid-template-columns: 1fr; align-items: stretch; }
+      .toolbar { justify-content: flex-start; }
+      .world-pulse { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      body { display: block; padding: 10px; }
+      .sidebar { position: relative; top: 0; min-height: auto; margin-bottom: 10px; }
+      .brand, .side-section { display: none; }
+      .nav { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 38px; overflow-x: auto; }
+      .nav button, .nav button.active { padding: 7px 8px; text-align: center; font-size: 11px; }
+      .search-wrap { grid-template-columns: 1fr; }
+      .command { display: none; }
+      .toolbar { display: none; }
+      #retryAll { display: none; }
+      .world-pulse { padding: 18px; }
+      .pulse-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Chart-first panorama: world -> Vietnam -> transmission -> detail. */
+    body[data-workspace='today'] #world-pulse { order: 1; }
+    body[data-workspace='today'] #macro-regime { order: 2; grid-column: span 12; }
+    body[data-workspace='today'] #vietnam-lens { order: 3; grid-column: span 12; }
+    body[data-workspace='today'] #impact-map { order: 4; }
+    body[data-workspace='today'] #summary { order: 5; }
+    body[data-workspace='today'] #news { order: 6; }
+
+    .panorama-panel { min-width: 0; padding: 14px; border-radius: 16px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }
+    .panorama-panel.light { background: #fbfbfd; border-color: rgba(0,0,0,.08); }
+    .panorama-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 10px; }
+    .panorama-head h3 { margin: 0; font-size: 15px; color: inherit; }
+    .world-pulse .panorama-head h3 { color: #fff; }
+    .panorama-head p { margin: 3px 0 0; font-size: 11px; color: rgba(255,255,255,.58); }
+    .panorama-panel.light .panorama-head p { color: #86868b; }
+    .panorama-legend { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; font-size: 10px; color: rgba(255,255,255,.7); }
+    .panorama-panel.light .panorama-legend { color: #6e6e73; }
+    .legend-line { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+    .legend-line::before { content: ''; width: 17px; height: 0; border-top: 3px solid currentColor; }
+    .legend-line.dashed::before { border-top-style: dashed; }
+    .legend-line.dotted::before { border-top-style: dotted; }
+    .panorama-canvas { display: block; width: 100%; height: 230px; }
+    .panorama-source { margin-top: 8px; font-size: 10px; color: rgba(255,255,255,.48); }
+    .panorama-panel.light .panorama-source { color: #86868b; }
+    body[data-workspace='today'] .pulse-grid { display: none; }
+    body[data-workspace='today'] #macro-regime .metrics-grid,
+    body[data-workspace='today'] #vietnam-lens .metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 12px; }
+    body[data-workspace='today'] #macro-regime .metric:nth-child(n+4),
+    body[data-workspace='today'] #vietnam-lens .metric:nth-child(n+4) { display: none; }
+
+    @media (max-width: 760px) {
+      .panorama-head { display: block; }
+      .panorama-legend { justify-content: flex-start; margin-top: 8px; }
+      .panorama-canvas { height: 200px; }
+      body[data-workspace='today'] #macro-regime .metrics-grid,
+      body[data-workspace='today'] #vietnam-lens .metrics-grid { grid-template-columns: 1fr; }
+    }
+
+    .asset-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .asset-group { overflow: hidden; border: 1px solid rgba(0,0,0,.08); border-radius: 14px; background: #fbfbfd; }
+    .asset-group h3 { margin: 0; padding: 11px 12px; border-bottom: 1px solid rgba(0,0,0,.07); font-size: 12px; color: #1d1d1f; }
+    .asset-row { display: grid; grid-template-columns: 1fr auto auto; gap: 9px; align-items: baseline; padding: 9px 12px; border-bottom: 1px solid rgba(0,0,0,.055); font-size: 12px; }
+    .asset-row:last-child { border-bottom: 0; }
+    .asset-row strong { color: #1d1d1f; font-weight: 600; }
+    .asset-row .asset-price { color: #3a3a3c; font-variant-numeric: tabular-nums; }
+    .asset-row .asset-change { font-variant-numeric: tabular-nums; font-size: 11px; }
+    .asset-row .asset-change.up { color: #198754; }
+    .asset-row .asset-change.down { color: #d93a31; }
+    @media (max-width: 1050px) { .asset-board { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 600px) { .asset-board { grid-template-columns: 1fr; } }
+
+    /* Public evidence layer: separate cadence, accessible charts, no demo fallback. */
+    body[data-provider="public"] #world-pulse, body[data-provider="public"] #impact-map,
+    body[data-provider="public"] #macro-regime, body[data-provider="public"] #vietnam-lens,
+    body[data-provider="public"] #summary { display:none !important; }
+    body:not([data-provider="public"]) #public-overview, body:not([data-provider="public"]) #commodity-history { display:none !important; }
+    #public-overview { order:0; background:transparent; border:0; padding:0; box-shadow:none; }
+    .evidence-section { margin:0 0 24px; padding:24px; border:1px solid #e5e5e7; border-radius:18px; background:#fff; }
+    .evidence-heading { display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin-bottom:20px; }
+    .evidence-heading h2 { font-size:25px; letter-spacing:-.04em; }
+    .evidence-heading p, .evidence-note { color:#606068; font-size:12px; line-height:1.6; }
+    .evidence-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+    .evidence-chart { min-width:0; padding:16px 0; border-top:1px solid #e8e8eb; }
+    .evidence-chart h3 { font-size:15px; margin-bottom:5px; }
+    .evidence-chart svg { width:100%; height:auto; display:block; overflow:visible; }
+    .evidence-chart text { fill:#565660; font-size:12px; font-family:inherit; }
+    .evidence-legend { display:flex; flex-wrap:wrap; gap:12px; font-size:12px; margin:12px 0; }
+    .evidence-legend span::before { content:''; display:inline-block; width:16px; border-top:3px solid var(--series); margin-right:6px; vertical-align:middle; }
+    .evidence-chart details { font-size:12px; margin-top:10px; }
+    .evidence-chart summary { cursor:pointer; color:#4c4c54; }
+    .evidence-table { max-height:210px; overflow:auto; margin-top:10px; }
+    .evidence-table table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+    .evidence-table th,.evidence-table td { padding:7px; text-align:left; border-bottom:1px solid #ededf0; }
+    .evidence-gap { padding:18px; background:#f5f5f7; border-radius:10px; color:#606068; font-size:13px; }
+    .evidence-source { display:block; margin-top:8px; font-size:11px; color:#666670; line-height:1.7; overflow-wrap:anywhere; }
+    .source-directory { margin-top:20px; display:grid; gap:9px; font-size:13px; }
+    .module-status { display:none; padding:20px; color:#606068; background:#f5f5f7; border-radius:10px; margin-top:12px; }
+    .card[data-state="loading"]>.module-status,.card[data-state="empty"]>.module-status,.card[data-state="error"]>.module-status { display:block; }
+    .card[data-state="loading"]>.card-content,.card[data-state="empty"]>.card-content,.card[data-state="error"]>.card-content { display:none !important; }
+    .card>.loading-state,.card>.error-state,.card>.empty-state { display:none !important; }
+    .asset-row { grid-template-columns:minmax(75px,1fr) minmax(65px,auto); }
+    .asset-change { grid-column:1/-1; overflow-wrap:anywhere; }
+    .asset-row small { grid-column:1/-1; color:#64646e; font-size:10px; line-height:1.6; }
+    .asset-board { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .card,.world-pulse { min-width:0; }
+    body:not([data-provider="demo"]) .demo-only { display:none !important; }
+    .toolbar { flex-wrap:wrap; }
+    .footer-note { grid-column:1/-1; }
+    #news { grid-column:span 12; }
+    @media(max-width:1000px) { .evidence-grid { grid-template-columns:1fr; } }
+    @media(max-width:760px) {
+      .evidence-section { padding:16px; }
+      .evidence-heading { display:block; }
+      .evidence-heading h2 { font-size:23px; margin-bottom:8px; }
+      .toolbar { display:flex; } #retryAll { display:inline-flex; }
+      .asset-board { grid-template-columns:1fr; }
+      .stream-controls { flex-wrap:wrap; display:flex; } .stream-controls select { max-width:100%; }
+      .source-directory { overflow-wrap:anywhere; }
+    }
+  </style>
+</head>
+<body data-provider="public">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">MV</div>
+      <div>
+        <h1>MarketTerminal</h1>
+        <p>Market Watch Studio</p>
+      </div>
+    </div>
+
+    <div class="nav" role="tablist" aria-label="Điều hướng">
+      <button class="active" data-priority="high" data-target="global-overview">Tổng quan thị trường</button>
+      <button data-priority="high" data-target="watchlist">Watchlist</button>
+      <button data-priority="high" data-target="charts">Biểu đồ kỹ thuật</button>
+      <button data-priority="high" data-target="flow">Dòng tiền</button>
+      <button data-priority="high" data-target="portfolio">Danh mục</button>
+      <button data-priority="high" data-target="summary">Tóm tắt AI</button>
+      <button data-priority="high" data-target="news">Tin tức</button>
+      <button data-priority="low" data-target="corp">Công ty mẫu</button>
+      <button data-priority="low" data-target="screener">Screener</button>
+    </div>
+
+    <div class="side-section">
+      <h3 class="section-title">Kết nối API</h3>
+      <div id="provider-status" class="status-chip">Provider: Demo dataset</div>
+      <p class="muted-row section-text">Mọi truy xuất thực tế đều đi qua lớp DataProvider wrapper để dễ tích hợp API sau này.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section class="topbar">
+      <div class="search-wrap">
+        <input id="command" class="command" placeholder="Lệnh nhanh: add_symbol, filter:gainers, timeframe:1W, add_alert..." />
+        <input id="search" class="search" type="search" placeholder="Tìm mã (VNM, VIC, FPT...)" />
+        <div class="hint">Lệnh nhanh + tìm mã/watchlist theo thời gian thực (demo)</div>
+      </div>
+      <div class="toolbar">
+        <span class="toolbar-label">Chế độ:</span>
+        <span class="compact-note">Chế độ: Đầy đủ</span>
+        <button id="toggleCompact" class="ghost" data-state="off">Ẩn module phụ</button>
+        <button id="retryAll" class="primary">Tải lại tất cả</button>
+        <button id="simulateError" class="ghost">Mô phỏng lỗi</button>
+        <span class="demo-tag">Dữ liệu DEMO</span>
+      </div>
+    </section>
+
+    <section class="ticker">
+      <div class="ticker-inner" id="tickerBar"></div>
+    </section>
+
+    <section class="grid">
+      <section class="world-pulse" id="world-pulse" data-state="loading" data-priority="high">
+        <div><div class="eyebrow">GLOBAL CONTEXT · DEMO SNAPSHOT</div><h2>World Pulse</h2><p class="section-subtitle">Bức tranh đầu tiên cần đọc trước khi đi vào giá và cổ phiếu.</p><div class="pulse-score"><strong id="pulseScore">--</strong><span id="pulseTone">Đang tải bối cảnh</span></div><p class="muted-row" id="pulseReadout">Tách dữ kiện quan sát được khỏi phần diễn giải và rủi ro.</p><div class="source-line" style="margin-top:16px"><span class="source-badge">DEMO / không realtime</span><span>Nguồn mẫu: IMF · Fed · SBV</span><span class="confidence">Độ tin cậy: mô phỏng</span></div></div>
+        <div class="pulse-grid" id="pulseEvents"></div>
+      </section>
+      <div class="logical-section" data-priority="high">Global context → Macro regime → Vietnam transmission</div>
+      <section class="card col-12" id="impact-map" data-state="loading" data-priority="high"><div class="card-header"><div><h2 class="card-title">Bản đồ tác động</h2><p class="card-sub">Sự kiện → biến số vĩ mô → tài sản → ngành → cổ phiếu</p></div><span class="chip">Fact → Signal → Risk</span></div><div class="card-content"><div class="impact-chain" id="impactChain"></div><div class="source-line" style="margin-top:14px"><span class="source-badge">Interpretation</span><span>Đây là lớp diễn giải demo, không phải khuyến nghị đầu tư.</span></div></div></section>
+      <section class="card col-6" id="macro-regime" data-state="loading" data-priority="high"><div class="card-header"><div><h2 class="card-title">Macro regime</h2><p class="card-sub">Lãi suất, lạm phát, USD, hàng hóa và thương mại toàn cầu</p></div><span class="chip">Fact</span></div><div class="card-content"><div class="metrics-grid" id="macroRegimeCards"></div><div class="source-line" style="margin-top:12px"><span class="source-badge">DEMO</span><span>Cập nhật mô phỏng</span></div></div></section>
+      <section class="card col-6" id="vietnam-lens" data-state="loading" data-priority="high"><div class="card-header"><div><h2 class="card-title">Vietnam Lens</h2><p class="card-sub">Các kênh truyền dẫn từ thế giới vào nền kinh tế Việt Nam</p></div><span class="chip">Signal</span></div><div class="card-content"><div class="metrics-grid" id="vietnamLensCards"></div><div class="source-line" style="margin-top:12px"><span class="source-badge">DEMO</span><span>Tích cực / tiêu cực / chưa rõ</span></div></div></section>
+      <section class="card col-12" id="asset-board" data-state="loading" data-priority="high">
+        <div class="card-header"><div><h2 class="card-title">Cross-asset market board</h2><p class="card-sub">Toàn bộ lớp tài sản chính: thế giới, Việt Nam, hàng hóa, FX, lãi suất và crypto</p></div><span class="chip">DEMO · không realtime</span></div>
+        <div class="card-content"><div id="assetBoard" class="asset-board"></div><div class="source-line" id="assetBoardStatus" style="margin-top:14px"><span class="source-badge">Nguồn cần kết nối</span><span>Giá và thay đổi là dữ liệu demo; khi dùng API thật, mỗi nhóm sẽ có timestamp và nguồn riêng.</span></div></div>
+      </section>
+      <section class="card provider-card col-12" id="provider" data-state="ready" data-priority="low">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Cấu hình Data Provider</h2>
+            <p class="card-sub">Endpoint máy chủ riêng; khóa API chỉ được lưu trên máy chủ</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div>
+              <label>Mode</label>
+              <select id="providerMode" class="full-width field-space-top">
+                <option value="demo">demo</option>
+                <option value="public">public · nguồn miễn phí</option>
+                <option value="custom">custom api</option>
+              </select>
+            </div>
+            <div>
+              <label>Endpoint</label>
+              <input id="providerEndpoint" placeholder="https://api.myprovider.com" />
+            </div>
+            <div>
+              <label>API Key</label>
+              <input id="providerKey" placeholder="Chỉ cấu hình khóa ở server, không nhập tại đây" disabled />
+            </div>
+          </div>
+          <p class="section-text muted-row">Provider wrapper chỉ cần triển khai <code>customDataFetch()</code> theo schema <code>resource -&gt; payload</code>.</p>
+          <div class="mt-10">
+            <button id="saveProvider" class="primary">Lưu cấu hình</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Tổng quan thị trường</div>
+
+      <section class="card col-8" id="global-overview" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+          <h2 class="card-title">Tổng quan thị trường toàn cầu</h2>
+          <p class="card-sub">VN-Index, HNX, UPCoM và chỉ số thế giới</p>
+          </div>
+          <span class="chip">Overview</span>
+        </div>
+        <div class="loading-state">Đang tải số liệu thị trường...</div>
+        <div class="error-state">Không thể tải. <button class="btn-inline" data-retry="global-overview">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu tổng quan.</div>
+        <div class="card-content">
+          <div class="metrics-grid" id="globalCards"></div>
+        </div>
+      </section>
+
+      <section class="card col-4" id="market-breadth" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Market breadth</h2>
+            <p class="card-sub">Breadth, RSI proxy, thanh khoản</p>
+          </div>
+          <span class="chip">Breadth</span>
+        </div>
+        <div class="loading-state">Đang tải breadth...</div>
+        <div class="error-state">Không tải được. <button class="btn-inline" data-retry="market-breadth">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu breadth.</div>
+        <div class="card-content">
+          <div class="metrics-grid" id="breadthCards"></div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Quotes & theo dõi nhanh</div>
+
+      <section class="card col-7" id="watchlist" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Watchlist & Bảng giá chi tiết</h2>
+            <p class="card-sub">Bảng giá các mã đã chọn + lọc nhanh theo mã</p>
+          </div>
+        </div>
+        <div class="loading-state">Đang tải watchlist...</div>
+        <div class="error-state">Không thể tải watchlist. <button class="btn-inline" data-retry="watchlist">Thử lại</button></div>
+        <div class="empty-state">Watchlist trống.</div>
+        <div class="card-content">
+          <div class="ticker-input">
+            <input id="new-symbol" placeholder="Nhập thêm mã: VNM, FPT, GVR..." />
+            <button id="addSymbol" class="primary">Thêm mã</button>
+          </div>
+          <table class="list-table" id="watchlistTable">
+            <thead>
+              <tr>
+                <th>Mã</th>
+                <th>Giá</th>
+                <th>Thay đổi</th>
+                <th>%</th>
+                <th>Khối lượng</th>
+                <th>Vốn hóa</th>
+                <th>PE</th>
+                <th>Beta</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card col-5" id="indicators" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Bảng chỉ báo kỹ thuật</h2>
+            <p class="card-sub">MA, EMA, RSI, MACD, Bollinger</p>
+          </div>
+          <span class="chip">Technical</span>
+        </div>
+        <div class="loading-state">Đang tải indicator...</div>
+        <div class="error-state">Lỗi indicator. <button class="btn-inline" data-retry="indicators">Thử lại</button></div>
+        <div class="empty-state">Chưa có dữ liệu chỉ báo.</div>
+        <div class="card-content">
+          <div class="two-col">
+            <div>
+              <div class="metrics-grid" id="indicatorCards"></div>
+            </div>
+            <div>
+              <div class="metric-label section-label">Signal</div>
+              <div class="metric">
+                <div class="metric-label">MA / EMA</div>
+                <div class="metric-value up">Buy</div>
+              </div>
+              <p class="muted-row mt-8">Nguồn demo cho VHM với MA(20), EMA(50), RSI(14), MACD(12,26,9), BB(20,2).</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Kỹ thuật thị trường</div>
+
+      <section class="card col-8" id="charts" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Nến + Khối lượng</h2>
+            <p class="card-sub">Đổi khung thời gian để đọc momentum</p>
+          </div>
+          <div class="control-row">
+            <select id="chartTimeframe" class="select">
+              <option>1D</option><option selected>1W</option><option>1M</option><option>1Y</option>
+            </select>
+            <div class="pill-stack">
+              <span class="mini-badge">RSI</span>
+              <span class="mini-badge">MACD</span>
+              <span class="mini-badge">EMA</span>
+            </div>
+          </div>
+        </div>
+        <div class="loading-state">Đang dựng chart...</div>
+        <div class="error-state">Không thể vẽ chart. <button class="btn-inline" data-retry="charts">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu biểu đồ.</div>
+        <div class="card-content">
+          <div class="chart-shell"><canvas id="candlestickCanvas" height="220"></canvas></div>
+          <div class="spacer-10"></div>
+          <div class="chart-shell"><canvas id="volumeCanvas" height="120"></canvas></div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Thanh khoản & độ sâu</div>
+
+      <section class="card col-4" id="orderbook" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Order book & Market depth</h2>
+            <p class="card-sub">Bên mua / bên bán</p>
+          </div>
+          <span class="chip">Microstructure</span>
+        </div>
+        <div class="loading-state">Đang lấy order book...</div>
+        <div class="error-state">Lỗi order book. <button class="btn-inline" data-retry="orderbook">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu order book.</div>
+        <div class="card-content dual">
+          <div>
+            <div class="metric-label section-label">Bên mua</div>
+            <table class="list-table" id="bidTable"><thead><tr><th>Giá</th><th>Khối lượng</th><th>Độ sâu</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">Bên bán</div>
+            <table class="list-table" id="askTable"><thead><tr><th>Giá</th><th>Khối lượng</th><th>Độ sâu</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card col-4" id="sectors" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Heatmap theo ngành</h2>
+            <p class="card-sub">Hiệu suất 2 tuần theo ngành</p>
+          </div>
+          <span class="chip">Heat</span>
+        </div>
+        <div class="loading-state">Đang tải heatmap...</div>
+        <div class="error-state">Lỗi heatmap. <button class="btn-inline" data-retry="sectors">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu sector.</div>
+        <div class="card-content">
+          <div class="chip-heat" id="sectorHeat"></div>
+        </div>
+      </section>
+
+      <section class="card col-8" id="movers" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Top gainers, losers & khối lượng</h2>
+            <p class="card-sub">Top biến động theo 3 trục</p>
+          </div>
+          <select id="moverScope" class="select">
+            <option>Hôm nay</option><option>7D</option><option>30D</option>
+          </select>
+        </div>
+        <div class="loading-state">Đang tải movers...</div>
+        <div class="error-state">Không thể tải movers. <button class="btn-inline" data-retry="movers">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu movers.</div>
+        <div class="card-content three-col">
+          <div>
+            <div class="metric-label section-label">Top gainers</div>
+            <table class="list-table" id="moversUp"><thead><tr><th>Mã</th><th>%</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">Top losers</div>
+            <table class="list-table" id="moversDown"><thead><tr><th>Mã</th><th>%</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">Top volume</div>
+            <table class="list-table" id="moversVol"><thead><tr><th>Mã</th><th>Khối lượng</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Dòng tiền & định giá</div>
+
+      <section class="card col-4" id="flow" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Dòng tiền ngoại - nội - thị trường</h2>
+            <p class="card-sub">Dòng tiền và tín hiệu thanh khoản</p>
+          </div>
+          <span class="chip">Flow</span>
+        </div>
+        <div class="loading-state">Đang tải dòng tiền...</div>
+        <div class="error-state">Lỗi flow. <button class="btn-inline" data-retry="flow">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu dòng tiền.</div>
+        <div class="card-content">
+          <div class="metrics-grid" id="flowCards"></div>
+        </div>
+      </section>
+
+      <section class="card col-5" id="valuation" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Chỉ số định giá</h2>
+            <p class="card-sub">P/E, P/B, EV/EBITDA, FCF yield</p>
+          </div>
+          <span class="chip">Fundamental</span>
+        </div>
+        <div class="loading-state">Đang tính valuation...</div>
+        <div class="error-state">Lỗi valuation. <button class="btn-inline" data-retry="valuation">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu valuation.</div>
+        <div class="card-content">
+          <div class="metrics-grid" id="valuationGrid"></div>
+        </div>
+      </section>
+
+      <section class="card col-7" id="financials" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Báo cáo tài chính + EPS</h2>
+            <p class="card-sub">Kế toán tài chính năm gần nhất và dự kiến</p>
+          </div>
+          <span class="chip">Accounting</span>
+        </div>
+        <div class="loading-state">Đang tải báo cáo tài chính...</div>
+        <div class="error-state">Lỗi tài chính. <button class="btn-inline" data-retry="financials">Thử lại</button></div>
+        <div class="empty-state">Không có số liệu tài chính.</div>
+        <div class="card-content">
+          <div class="table-scroll">
+            <table class="list-table" id="financialTable">
+              <thead><tr><th>Chỉ tiêu</th><th>2024</th><th>2025F</th><th>YoY%</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="mid">Lịch sự kiện & vĩ mô</div>
+
+      <section class="card col-6" id="calendar" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Lịch công bố kết quả</h2>
+            <p class="card-sub">Lịch công bố theo phiên tới</p>
+          </div>
+          <span class="chip">Calendar</span>
+        </div>
+        <div class="loading-state">Đang tải calendar...</div>
+        <div class="error-state">Lỗi earnings calendar. <button class="btn-inline" data-retry="calendar">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu lịch.</div>
+        <div class="card-content">
+          <table class="list-table" id="earningsCalendar"><thead><tr><th>Ngày</th><th>Mã</th><th>Nội dung</th><th>Độ quan trọng</th></tr></thead><tbody></tbody></table>
+        </div>
+      </section>
+
+      <section class="card col-6" id="macro" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Lịch vĩ mô</h2>
+            <p class="card-sub">Lịch vĩ mô và chỉ số tham chiếu</p>
+          </div>
+          <span class="chip">Macro</span>
+        </div>
+        <div class="loading-state">Đang lấy dữ liệu vĩ mô...</div>
+        <div class="error-state">Lỗi macro. <button class="btn-inline" data-retry="macro">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu macro.</div>
+        <div class="card-content two-col">
+          <div>
+            <div class="metric-label section-label">Lịch 3 ngày tới</div>
+            <table class="list-table" id="economicCalendar"><thead><tr><th>Ngày</th><th>Chỉ số</th><th>Dự báo</th><th>Thực tế</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">Chỉ số vĩ mô</div>
+            <div id="macroCards" class="metrics-grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card col-12" id="crossAssets" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Commodities / FX / Crypto</h2>
+            <p class="card-sub">Bối cảnh cross-asset trước quyết định</p>
+          </div>
+          <button id="refreshCrossAsset" class="btn-inline">Làm mới</button>
+        </div>
+        <div class="loading-state">Đang nạp dữ liệu cross-asset...</div>
+        <div class="error-state">Lỗi cross-asset. <button class="btn-inline" data-retry="crossAssets">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu cross-asset.</div>
+        <div class="card-content layout-grid-3">
+          <div>
+            <div class="metric-label section-label">Commodities</div>
+            <table class="list-table" id="commoditiesTable"><thead><tr><th>Mã</th><th>Giá</th><th>Đổi</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">FX</div>
+            <table class="list-table" id="fxTable"><thead><tr><th>Cặp</th><th>Giá</th><th>Đổi</th></tr></thead><tbody></tbody></table>
+          </div>
+          <div>
+            <div class="metric-label section-label">Crypto</div>
+            <table class="list-table" id="cryptoTable"><thead><tr><th>Tài sản</th><th>Giá</th><th>Đổi</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="high">Danh mục & quản trị rủi ro</div>
+
+      <section class="card col-7" id="portfolio" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Theo dõi danh mục + P&amp;L</h2>
+            <p class="card-sub">Khối lượng, giá vốn, mark-to-market, P/L</p>
+          </div>
+          <span class="chip">Portfolio</span>
+        </div>
+        <div class="loading-state">Đang tải danh mục...</div>
+        <div class="error-state">Lỗi danh mục. <button class="btn-inline" data-retry="portfolio">Thử lại</button></div>
+        <div class="empty-state">Danh mục trống.</div>
+        <div class="card-content">
+          <div class="allocation">
+            <div>
+              <table class="list-table" id="portfolioTable"><thead><tr><th>Mã</th><th>Khối lượng</th><th>Giá vốn</th><th>Giá MKT</th><th>P/L</th></tr></thead><tbody></tbody></table>
+              <div class="metrics-grid mt-8" id="pnlMini"></div>
+            </div>
+            <div>
+              <div class="donut"></div>
+              <p class="muted-row text-center mt-8">Phân bổ demo theo ngành</p>
+            </div>
+          </div>
+          <div class="mt-12"><canvas id="pnlCanvas" height="140"></canvas></div>
+        </div>
+      </section>
+
+      <section class="card col-5" id="risk" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Rủi ro danh mục</h2>
+            <p class="card-sub">VaR, Beta, drawdown, volatility 1Y</p>
+          </div>
+          <span class="chip">Risk</span>
+        </div>
+        <div class="loading-state">Đang tính risk metrics...</div>
+        <div class="error-state">Lỗi risk metrics. <button class="btn-inline" data-retry="risk">Thử lại</button></div>
+        <div class="empty-state">Không có dữ liệu rủi ro.</div>
+        <div class="card-content">
+          <div class="metrics-grid" id="riskCards"></div>
+        </div>
+      </section>
+
+      <div class="logical-section" data-priority="low">Quyết định nhanh</div>
+
+      <section class="card col-6" id="alerts" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Alerts / watch triggers</h2>
+            <p class="card-sub">Thiết lập cảnh báo kỹ thuật & thanh khoản</p>
+          </div>
+        </div>
+        <div class="loading-state">Đang tải alert...</div>
+        <div class="error-state">Lỗi alerts. <button class="btn-inline" data-retry="alerts">Thử lại</button></div>
+        <div class="empty-state">Chưa có cảnh báo.</div>
+        <div class="card-content">
+          <div class="ticker-input">
+            <input id="alertInput" placeholder="VD: VNM close > 112,000 và vol > 15M" />
+            <button id="addAlert" class="primary">Thêm cảnh báo</button>
+          </div>
+          <div id="alertsList"></div>
+        </div>
+      </section>
+
+      <section class="card col-6" id="screener" data-state="loading" data-priority="low">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Screener</h2>
+            <p class="card-sub">Filter theo PE / ROE / tăng trưởng</p>
+          </div>
+        </div>
+        <div class="loading-state">Đang chạy screener...</div>
+        <div class="error-state">Lỗi screener. <button class="btn-inline" data-retry="screener">Thử lại</button></div>
+        <div class="empty-state">Chưa có kết quả.</div>
+        <div class="card-content">
+          <div class="control-row">
+            <select id="screenerSector" class="select">
+              <option>All</option>
+              <option>Banking</option>
+              <option>Consumer</option>
+              <option>Finance</option>
+              <option>IT</option>
+              <option>Materials</option>
+            </select>
+            <input id="screenerPeMax" class="select input-tight" value="20" type="number" />
+            <input id="screenerRoeMin" class="select input-tight" value="10" type="number" />
+            <button id="runScreener" class="primary">Chạy</button>
+          </div>
+          <div id="screenerResult"></div>
+        </div>
+      </section>
+
+      <section class="card col-6" id="comparison" data-state="loading" data-priority="mid">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">So sánh cổ phiếu</h2>
+            <p class="card-sub">So sánh nhanh nhiều mã</p>
+          </div>
+          <span class="chip">Compare</span>
+        </div>
+        <div class="loading-state">Đang tạo comparison...</div>
+        <div class="error-state">Lỗi comparison. <button class="btn-inline" data-retry="comparison">Thử lại</button></div>
+        <div class="empty-state">Chưa chạy comparison.</div>
+        <div class="card-content">
+          <div class="ticker-input">
+            <input id="compareInput" placeholder="VD: VNM,FPT,HPG" />
+            <button id="runComparison" class="primary">So sánh</button>
+          </div>
+          <div id="comparisonResult"></div>
+        </div>
+      </section>
+
+      <section class="card col-6" id="summary" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Tóm tắt AI cho phiên</h2>
+            <p class="card-sub">Tóm tắt định tính theo dashboard</p>
+          </div>
+          <span class="chip">Insights</span>
+        </div>
+        <div class="loading-state">Đang tổng hợp summary...</div>
+        <div class="error-state">Lỗi summary. <button class="btn-inline" data-retry="summary">Thử lại</button></div>
+        <div class="empty-state">Chưa có summary.</div>
+        <div class="card-content">
+          <p id="aiSummary" class="muted-row"></p>
+          <div class="pill-stack" id="summarySignals"></div>
+        </div>
+      </section>
+
+      <section class="card col-6" id="news" data-state="loading" data-priority="high">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Tin tức hằng ngày</h2>
+            <p class="card-sub">Phân loại theo source / sector / sentiment</p>
+          </div>
+          <span class="chip">News</span>
+        </div>
+        <div class="stream-controls"><select id="streamCategory" aria-label="Lọc nhóm tin"><option value="all">Tất cả nhóm</option><option value="World">World</option><option value="Macro">Macro</option><option value="Vietnam">Vietnam</option><option value="Markets">Markets</option><option value="Companies">Companies</option></select><select id="streamRegion" aria-label="Lọc khu vực"><option value="all">Mọi khu vực</option><option value="Global">Global</option><option value="US">US</option><option value="China">China</option><option value="Europe">Europe</option><option value="ASEAN">ASEAN</option><option value="Vietnam">Vietnam</option></select><select id="streamSource" aria-label="Lọc nguồn"><option value="all">Mọi nguồn</option></select><select id="streamWindow" aria-label="Lọc thời gian"><option value="all">Mọi thời điểm</option><option value="24h">24 giờ</option><option value="7d">7 ngày</option><option value="30d">30 ngày</option></select><select id="streamImpact" aria-label="Lọc ảnh hưởng"><option value="all">Mọi mức ảnh hưởng</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></div><div class="source-line stream-status" id="streamStatus">Đang đồng bộ dòng thông tin...</div><div class="loading-state">Đang tải dòng thông tin...</div>
+        <div class="error-state">Lỗi tin tức. <button class="btn-inline" data-retry="news">Thử lại</button></div>
+        <div class="empty-state">Không có tin tức.</div>
+        <div class="card-content" id="newsFeed"></div>
+      </section>
+
+      <section class="card col-12" id="corp" data-state="loading" data-priority="low">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Hồ sơ doanh nghiệp + Sự kiện</h2>
+            <p class="card-sub">Thông tin công ty mẫu và sự kiện đặc biệt</p>
+          </div>
+        </div>
+        <div class="loading-state">Đang tải hồ sơ công ty...</div>
+        <div class="error-state">Lỗi hồ sơ công ty. <button class="btn-inline" data-retry="corp">Thử lại</button></div>
+        <div class="empty-state">Chưa có dữ liệu công ty.</div>
+        <div class="card-content">
+          <div class="two-col">
+            <div id="companyProfile"></div>
+            <div>
+              <div class="metric-label section-label">Corporate actions</div>
+              <div id="corporateActions"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-note">Thiết kế theo triết lý tối giản cao cấp, trọng tâm trực quan hóa quyết định đầu tư. Toàn bộ dữ liệu là <strong>Demo</strong> và KHÔNG phản ánh thời gian thực.</div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      providerMode: 'public',
+      providerConfig: null,
+      publicAssetBoard: null,
+      publicUpdatedAt: null,
+      cryptoSocket: null,
+      searchFilter: '',
+      forceError: false,
+      compactMode: true,
+      dataVersion: 'v4-stock-terminal-apple',
+      watchlistSymbols: ['VHM', 'VCB', 'HPG', 'FPT', 'VNM', 'GVR', 'PNJ'],
+      alerts: [
+        { id: 1, when: '09:20', type: 'price', text: 'VHM cắt lên MA20 khung 1W', severity: 'info' },
+        { id: 2, when: '11:05', type: 'risk', text: 'HPG giảm trên 3% trong phiên - giảm margin an toàn', severity: 'warn' }
+      ]
+    };
+
+    const chartFont = '11px -apple-system, "SF Pro Text", "SF Pro Display", BlinkMacSystemFont, sans-serif';
+    const chartColors = {
+      axis: 'rgba(148, 163, 184, 0.2)',
+      grid: 'rgba(148, 163, 184, 0.12)',
+      surface: '#06070a',
+      up: '#22c55e',
+      down: '#ef4444',
+      upFill: 'rgba(34,197,94,0.30)',
+      downFill: 'rgba(239,68,68,0.30)',
+      marker: '#06b6d4'
+    };
+
+    const PROVIDER_CONFIG = {
+      mode: 'demo',
+      refreshMinutes: 15,
+      sources: {
+        global: { enabled: true, endpoint: '', apiKey: '' },
+        macro: { enabled: true, endpoint: '', apiKey: '' },
+        vietnam: { enabled: true, endpoint: '', apiKey: '' },
+        market: { enabled: true, endpoint: '', apiKey: '' },
+        company: { enabled: true, endpoint: '', apiKey: '' }
+      }
+    };
+
+    const DEMO = {
+      globalCards: [
+        { label: 'VN-Index', value: '1,252.84', delta: '+1.82%', dir: 'up', note: 'session +0.9%' },
+        { label: 'HNX-Index', value: '266.55', delta: '+0.74%', dir: 'up', note: 'session +0.36%' },
+        { label: 'UPCoM-Index', value: '104.01', delta: '-0.42%', dir: 'down', note: 'phiên yếu hơn' },
+        { label: 'S&P 500', value: '5,456.30', delta: '+0.56%', dir: 'up', note: 'USD risk-on' },
+        { label: 'NASDAQ', value: '17,950.1', delta: '+0.41%', dir: 'up', note: 'Tech vẫn mạnh' },
+        { label: 'Nikkei 225', value: '39,110', delta: '+0.88%', dir: 'up', note: 'Yen yếu' }
+      ],
+      breadth: [
+        { label: 'Advance / Decline', value: '18 / 22', delta: '+', dir: 'down', note: '18 tăng - 22 giảm' },
+        { label: 'Overbought RSI', value: '32%', delta: 'RSI=68', dir: 'down', note: 'Cảnh giác pullback' },
+        { label: 'New highs', value: '9', delta: 'vs 6', dir: 'up', note: 'Nhiều mã dẫn dắt' },
+        { label: 'New lows', value: '6', delta: 'đi ngang', dir: 'neutral', note: 'Chưa có dấu hiệu căng thẳng' }
+      ],
+      ticker: [
+        'VHM +1.7% | KLGD 1.12 tỷ - Mua ròng NĐTNN +2.2%',
+        'VCB +0.9% | Dự kiến cổ tức Q3: 2.1%',
+        'HPG -1.2% | Điều chỉnh giảm theo giá thép',
+        'FPT +0.5% | Cloud và AI tiếp tục thu hút',
+        'USD/VND +0.13% | Fed hạ tốc tăng',
+        'BTC +2.4% | Thanh khoản được cải thiện',
+        'Dầu WTI 78.2 (+0.8%) | Lưu lượng LNG giảm',
+        'GOLD 2,060 (+0.2%) | Dòng tiền trú ẩn chưa ổn định'
+      ],
+      watchlist: [
+        ['VHM', 104100, 1830, 1.79, '1.12B', '73,500B', 8.9, 1.11],
+        ['VCB', 101900, 950, 0.94, '5.21B', '196,000B', 10.2, 0.67],
+        ['HPG', 24500, -410, -1.64, '19.4B', '81,200B', 14.6, 1.31],
+        ['FPT', 120300, 2100, 1.77, '3.4B', '53,100B', 15.8, 0.89],
+        ['VNM', 81000, 1200, 1.5, '9.1B', '95,500B', 16.4, 0.52],
+        ['GVR', 5600, -220, -3.79, '4.3B', '20,200B', 12.9, 1.14],
+        ['PNJ', 93000, 700, 0.76, '2.1B', '33,800B', 16.9, 1.06],
+        ['SSI', 25500, 140, 0.55, '3.8B', '13,900B', 10.7, 1.21],
+        ['VPB', 22000, -60, -0.27, '1.6B', '27,900B', 11.1, 1.0]
+      ],
+      indicators: [
+        { label: 'MA(20)', value: '103,850', delta: '+2.1%', dir: 'up', note: 'vượt MA20' },
+        { label: 'EMA(50)', value: '101,920', delta: '+1.2%', dir: 'up', note: 'độ dốc vừa' },
+        { label: 'RSI(14)', value: 64.3, delta: '+3.4', dir: 'up', note: 'chưa quá mua' },
+        { label: 'MACD', value: 1.27, delta: '+0.36', dir: 'up', note: 'histogram dương' },
+        { label: 'Bollinger(20,2)', value: '104,500 / 103,200', delta: 'tight', dir: 'up', note: 'biên hẹp có thể breakout' }
+      ],
+      chart: {
+        oneW: [
+          { d:'Mon', open:103100, high:104000, low:102500, close:103950, vol:520 },
+          { d:'Tue', open:103950, high:104400, low:103100, close:104100, vol:610 },
+          { d:'Wed', open:104100, high:104300, low:103700, close:104050, vol:590 },
+          { d:'Thu', open:104050, high:105100, low:103900, close:104900, vol:645 },
+          { d:'Fri', open:104900, high:105220, low:104150, close:104100, vol:690 },
+          { d:'Sat', open:104100, high:104800, low:103980, close:104750, vol:712 },
+          { d:'Sun', open:104750, high:105300, low:104400, close:105180, vol:800 }
+        ],
+        oneD: [
+          { d:'09:00', open:104300, high:104500, low:104000, close:104120, vol:72 },
+          { d:'10:00', open:104120, high:104800, low:104050, close:104620, vol:68 },
+          { d:'11:00', open:104620, high:104900, low:104500, close:104730, vol:70 },
+          { d:'13:30', open:104730, high:105250, low:104690, close:105150, vol:88 },
+          { d:'14:45', open:105150, high:105300, low:104950, close:105110, vol:92 },
+          { d:'15:20', open:105110, high:105240, low:104900, close:104980, vol:50 }
+        ],
+        oneM: [
+          { d:'01', open:98200, high:99800, low:97000, close:99120, vol:210 },
+          { d:'05', open:99120, high:102100, low:98600, close:101450, vol:240 },
+          { d:'09', open:101450, high:102400, low:100900, close:102050, vol:270 },
+          { d:'13', open:102050, high:103100, low:101600, close:102700, vol:290 },
+          { d:'17', open:102700, high:103700, low:102300, close:103150, vol:275 },
+          { d:'21', open:103150, high:104000, low:102850, close:104000, vol:310 },
+          { d:'25', open:104000, high:104900, low:103700, close:104200, vol:350 },
+          { d:'29', open:104200, high:105300, low:104100, close:104900, vol:420 }
+        ],
+        oneY: [
+          { d:'Jan', open:82000, high:86000, low:81000, close:83500, vol:540 },
+          { d:'Mar', open:83500, high:90000, low:82600, close:89500, vol:720 },
+          { d:'May', open:89500, high:94200, low:88000, close:93100, vol:650 },
+          { d:'Jul', open:93100, high:97500, low:92500, close:95600, vol:710 },
+          { d:'Sep', open:95600, high:99000, low:94000, close:97900, vol:760 },
+          { d:'Nov', open:97900, high:104800, low:97200, close:104100, vol:990 }
+        ]
+      },
+      orderbook: {
+        bids: [
+          { price: 104500, qty: 3.5, depth: '5.5%' },
+          { price: 104450, qty: 2.9, depth: '4.7%' },
+          { price: 104400, qty: 3.1, depth: '5.0%' },
+          { price: 104300, qty: 4.0, depth: '6.4%' },
+          { price: 104250, qty: 2.2, depth: '3.5%' }
+        ],
+        asks: [
+          { price: 104600, qty: 2.8, depth: '4.8%' },
+          { price: 104650, qty: 3.6, depth: '6.2%' },
+          { price: 104700, qty: 2.1, depth: '3.5%' },
+          { price: 104760, qty: 2.7, depth: '4.6%' },
+          { price: 104800, qty: 3.8, depth: '6.6%' }
+        ]
+      },
+      sectors: [
+        { name:'Banking', val: 1.2, cls:'positive-bg' },
+        { name:'Real Estate', val: -2.4, cls:'negative-bg' },
+        { name:'Retail', val: 0.6, cls:'' },
+        { name:'Auto', val: 3.8, cls:'positive-bg' },
+        { name:'Materials', val: 1.9, cls:'positive-bg' },
+        { name:'Energy', val: -0.4, cls:'' },
+        { name:'Telecom', val: -1.1, cls:'negative-bg' },
+        { name:'Tech', val: 2.1, cls:'positive-bg' }
+      ],
+      movers: {
+        up: [['VRE', 4.9], ['SSI', 3.7], ['VHM', 3.1], ['FPT', 2.7], ['PNJ', 2.3]],
+        down: [['GVR', -4.2], ['HPG', -3.9], ['HAX', -3.2], ['VCG', -2.9], ['MBB', -2.4]],
+        volume: [['VHC', '46.8M'], ['VHM', '25.4M'], ['SSI', '22.2M'], ['HPG', '19.8M'], ['VPB', '18.4M']]
+      },
+      flow: {
+        rows: [
+          { label:'NĐTNN mua ròng', value:'+1,240 tỷ', delta:'+', dir:'up', note:'ETF và bluechip chủ đạo' },
+          { label:'NĐTNN bán ròng', value:'-180 tỷ', delta:'-', dir:'down', note:'chủ yếu bán ở nhịp tăng' },
+          { label:'Proprietary flow', value:'+620 tỷ', delta:'+', dir:'up', note:'Nhà môi giới net buy' },
+          { label:'Money flow VN-Index', value:'63', delta:'Score 63', dir:'up', note:'độ nghiêng mua' }
+        ]
+      },
+      valuation: [['P/E', '12.4x'], ['P/B', '1.9x'], ['PEG', '1.1x'], ['EV/EBITDA', '6.8x'], ['ROE', '12.4%'], ['FCF Yield', '6.7%'], ['Beta', '0.93'], ['Debt/Equity', '0.38']],
+      financials: [
+        ['Doanh thu thuần', '120,200', '128,500', '6.9%'],
+        ['LNST năm', '14,850', '15,300', '3.0%'],
+        ['EPS', '2,820', '3,060', '8.5%'],
+        ['Biên gộp', '31.2%', '31.8%', '0.6pp'],
+        ['Nợ ròng/VCSH', '1.2', '1.1', '-0.1']
+      ],
+      earningsCalendar: [
+        ['2026-08-04', 'VHM', 'KQKD quý II công bố', 'Cao'],
+        ['2026-08-05', 'VCB', 'Báo cáo ngân hàng', 'Trung bình'],
+        ['2026-08-06', 'HPG', 'Đại hội cổ đông', 'Cao'],
+        ['2026-08-07', 'SSI', 'Lãi ròng quý II', 'Cao']
+      ],
+      economicCalendar: [
+        ['2026-08-03', 'GDP YoY (VN)', 'Dự báo: 6.6%', '6.7%'],
+        ['2026-08-03', 'Lạm phát HICP', 'Dự báo: 2.4%', '2.3%'],
+        ['2026-08-05', 'Lãi suất Fed', 'Ổn định', 'Đang chờ'],
+        ['2026-08-06', 'PMI sản xuất', 'Dự báo: 52.1', '52.4']
+      ],
+      macro: [
+        { label:'VN-USD FX', value:'25,020', delta:'-0.12%', dir:'up', note:'USD giảm nhẹ' },
+        { label:'Lãi suất VN', value:'6.0%', delta:'ổn định', dir:'neutral', note:'trọng tâm tín dụng' },
+        { label:'Inflation VN', value:'2.8%', delta:'-0.2pp', dir:'down', note:'kiểm soát tốt' },
+        { label:'US10Y', value:'4.21%', delta:'-0.03', dir:'down', note:'pressure growth' }
+      ],
+      crossAssets: {
+        commodities: [['GOLD', 2060, '+0.2%'], ['COPPER', 9800, '+1.1%'], ['WHEAT', 7.65, '-0.7%']],
+        fx: [['USD/VND', 25020, '-0.1%'], ['EUR/USD', 1.09, '+0.2%'], ['JPY/USD', 0.0066, '-0.05%']],
+        crypto: [['BTC/USD', 68200, '+2.4%'], ['ETH/USD', 3380, '+1.7%'], ['SOL/USD', 152, '+0.9%']]
+      },
+      portfolio: {
+        rows: [
+          ['VHM', 400, 101500, 104100, '+1.03%'],
+          ['VCB', 150, 101200, 101900, '+0.69%'],
+          ['FPT', 120, 116000, 120300, '+3.71%'],
+          ['GVR', 2000, 6000, 5600, '-6.67%'],
+          ['SSI', 120, 24900, 25500, '+2.41%']
+        ],
+        pnl: [
+          ['T0', -2.8], ['T1', -1.6], ['T2', 0.2], ['T3', 1.4], ['T4', 1.8], ['T5', 2.7],
+          ['T6', 2.1], ['T7', 3.6], ['T8', 4.3], ['T9', 2.9], ['T10', 3.2]
+        ],
+        allocation: [['Banking', 37], ['Retail', 22], ['Real Estate', 16], ['Industrial', 11], ['Tech', 8], ['Khác', 6]]
+      },
+      risk: [
+        { label:'Daily VaR', value:'1.8%', delta:'(95%)', dir:'neutral', note:'mức chịu đựng trung bình' },
+        { label:'Max Drawdown', value:'-5.9%', delta:'quý gần nhất', dir:'down', note:'đang được kiểm soát' },
+        { label:'Vol 30D', value:'14.6%', delta:'tăng nhẹ', dir:'up', note:'cao hơn tuần trước 0.8pp' },
+        { label:'Sharpe', value:'1.21', delta:'0.12', dir:'up', note:'so với benchmark tốt' }
+      ],
+      alerts: [
+        { when:'08:30', type:'price', text:'VHM gần hỗ trợ 104,000, ưu tiên theo dõi tín hiệu breakout', severity:'warn' },
+        { when:'09:45', type:'volume', text:'VHM khối lượng > 2.0B, xem lại xu hướng', severity:'info' },
+        { when:'12:30', type:'indicator', text:'RSI VNM > 80: cân nhắc giảm nhẹ', severity:'warn' }
+      ],
+      screenerResults: [
+        ['VNM', 17.8, 11.2, 0.82, 'Consumer'],
+        ['VCB', 10.2, 12.5, 0.99, 'Banking'],
+        ['SSI', 9.9, 13.2, 1.1, 'Finance'],
+        ['FPT', 15.8, 13.9, 0.84, 'IT'],
+        ['HPG', 14.6, 11.9, 1.31, 'Materials']
+      ],
+      companyProfile: {
+        name: 'CTCP Tập đoàn VHM',
+        sector: 'Real Estate',
+        marketCap: '73,500 tỷ VND',
+        float: '68.3%',
+        shares: '700.7 triệu cổ phiếu',
+        ipo: '2008',
+        ceo: 'Vũ Văn Minh',
+        description: 'Tập đoàn bất động sản hàng đầu Việt Nam với hoạt động nhà ở, khu công nghiệp và logistics.'
+      },
+      corporateActions: [
+        { date: '2026-08-09', type: 'Share Buyback', detail: 'Đợt mua cổ phiếu quỹ 500.000 cổ phiếu (demo)' },
+        { date: '2026-08-12', type: 'Dividend', detail: 'Đề xuất cổ tức tiền mặt 4.5% nửa cuối năm (ước tính)' },
+        { date: '2026-08-16', type: 'Rights', detail: 'Cơ cấu vốn; chi tiết sẽ cập nhật khi công bố' }
+      ],
+      worldEvents: {
+        score: '62', tone: 'Thận trọng tích cực', readout: 'Tăng trưởng còn phân hóa; lãi suất và USD vẫn là hai biến số cần theo dõi trước khi diễn giải thị trường.',
+        events: [
+          { tag: 'FACT', title: 'Lãi suất toàn cầu chưa đồng pha', text: 'Các ngân hàng trung ương đang ở những pha chính sách khác nhau.', area: 'US · Europe' },
+          { tag: 'SIGNAL', title: 'USD giữ vai trò định hướng dòng vốn', text: 'Biến động USD có thể làm thay đổi khẩu vị rủi ro tại thị trường mới nổi.', area: 'FX · Flows' },
+          { tag: 'RISK', title: 'Thương mại và địa chính trị', text: 'Các cú sốc chuỗi cung ứng có thể lan sang hàng hóa và lạm phát.', area: 'Global · Asia' }
+        ]
+      },
+      impactMap: [
+        ['Sự kiện', 'Fed giữ lãi suất cao hơn kỳ vọng'],
+        ['Vĩ mô', 'USD / lợi suất tăng'],
+        ['Tài sản', 'Dầu, vàng, cổ phiếu EM biến động'],
+        ['Ngành', 'Ngân hàng · xuất khẩu · tiện ích'],
+        ['Cổ phiếu', 'VNM · FPT · HPG · VCB']
+      ],
+      macroRegime: [
+        { label: 'Fed funds', value: '5.25–5.50%', delta: 'cao', dir: 'down', note: 'Fact · US' },
+        { label: 'US 10Y yield', value: '4.28%', delta: '+7 bps', dir: 'down', note: 'Fact · bond' },
+        { label: 'DXY', value: '105.4', delta: '+0.32%', dir: 'neutral', note: 'Signal · áp lực tỷ giá' },
+        { label: 'Brent', value: '$82.10', delta: '+1.10%', dir: 'up', note: 'Fact · commodity' },
+        { label: 'Gold', value: '$2,338', delta: '+0.48%', dir: 'up', note: 'Risk hedge' },
+        { label: 'Global trade', value: 'Ổn định thấp', delta: 'mixed', dir: 'neutral', note: 'Interpretation' }
+      ],
+      vietnamLens: [
+        { label: 'USD/VND', value: '25,180', delta: '+0.18%', dir: 'down', note: 'Áp lực tỷ giá' },
+        { label: 'CPI', value: '3.4%', delta: 'YoY', dir: 'neutral', note: 'Trong vùng kiểm soát' },
+        { label: 'PMI', value: '51.2', delta: 'mở rộng', dir: 'up', note: 'Tín hiệu sản xuất' },
+        { label: 'Tín dụng', value: '6.1%', delta: 'YTD', dir: 'up', note: 'Hỗ trợ thanh khoản' },
+        { label: 'FDI đăng ký', value: '$14.2B', delta: '+8.5%', dir: 'up', note: 'Hỗ trợ dài hạn' },
+        { label: 'Tác động tổng hợp', value: 'Trung tính', delta: 'mixed', dir: 'neutral', note: 'Chưa đủ dữ kiện kết luận' }
+      ],
+      assetBoard: [
+        { title: 'Chứng khoán toàn cầu', rows: [['S&P 500', '5,456.30', '+0.56%', 'up'], ['Nasdaq 100', '19,474.62', '+0.82%', 'up'], ['Euro Stoxx 50', '4,898.71', '-0.18%', 'down'], ['Nikkei 225', '38,740.18', '+0.74%', 'up'], ['Shanghai Comp.', '3,010.65', '-0.31%', 'down']] },
+        { title: 'Chỉ số Việt Nam', rows: [['VN-Index', '1,252.84', '+1.82%', 'up'], ['VN30', '1,286.49', '+1.41%', 'up'], ['HNX-Index', '266.55', '+0.74%', 'up'], ['UPCoM-Index', '104.01', '-0.42%', 'down'], ['VNMidcap', '1,633.20', '+0.96%', 'up']] },
+        { title: 'Kim loại & năng lượng', rows: [['Vàng giao ngay', '$2,338.40', '+0.48%', 'up'], ['Bạc', '$30.42', '+0.66%', 'up'], ['Brent', '$82.10', '+1.10%', 'up'], ['WTI', '$77.80', '+1.05%', 'up'], ['Khí tự nhiên', '$2.79', '-0.62%', 'down']] },
+        { title: 'Hàng hóa công nghiệp', rows: [['Đồng', '$9,715/t', '+0.35%', 'up'], ['Quặng sắt', '$112.40/t', '-0.80%', 'down'], ['Lúa mì', '$6.28', '+0.20%', 'up'], ['Đậu tương', '$11.84', '-0.15%', 'down'], ['Cà phê', '$4,410/t', '+1.24%', 'up']] },
+        { title: 'FX & lợi suất', rows: [['DXY', '105.40', '+0.32%', 'down'], ['USD/VND', '25,180', '+0.18%', 'down'], ['EUR/USD', '1.0842', '-0.22%', 'down'], ['US 2Y', '4.71%', '+5 bps', 'down'], ['US 10Y', '4.28%', '+7 bps', 'down']] },
+        { title: 'Tài sản số', rows: [['Bitcoin', '$67,840', '+2.15%', 'up'], ['Ethereum', '$3,640', '+1.48%', 'up'], ['BTC dominance', '53.2%', '+0.24 pts', 'up'], ['USDT dominance', '3.8%', '-0.10 pts', 'down'], ['Crypto cap', '$2.55T', '+1.72%', 'up']] }
+      ],
+      news: [
+        { cat: 'Nền tảng', source: 'Bloomberg', title: 'Dòng tiền ETF bất động sản tiếp tục chảy vào VN-Index', sentiment: 'positive', tickers: ['VHM','REE'], t: '09:15' },
+        { cat: 'Chính sách', source: 'VietStock', title: 'Ngân hàng Nhà nước duy trì mặt bằng lãi suất điều hành', sentiment: 'neutral', tickers: ['VCB','VPB'], t: '09:45' },
+        { cat: 'Công bố', source: 'Financial Times', title: 'Doanh nghiệp thép cập nhật kế hoạch mở rộng công suất', sentiment: 'positive', tickers: ['HPG'], t: '10:30' },
+        { cat: 'Rủi ro', source: 'Reuters', title: 'Dòng tiền toàn cầu dịch chuyển do bất ổn địa chính trị', sentiment: 'negative', tickers: ['VN30', 'SPX'], t: '11:10' }
+      ],
+      summary: {
+        headline: 'Thị trường duy trì xu hướng tích cực, cần kiểm soát rủi ro khu vực ngân hàng và BĐS.',
+        marketTone: 'tăng nhẹ',
+        sectorBias: ['Banking', 'Technology'],
+        riskAlerts: ['Biến động vĩ mô Mỹ có thể kéo thanh khoản toàn cầu.', 'Nhóm bất động sản có thể gây pullback ngắn hạn nếu thanh khoản giảm.']
+      }
+    };
+
+    state.resourceData = {};
+    state.newsItems = [];
+    state.generation = 0;
+    state.requests = new Set();
+    state.pending = new Map();
+    state.sourceCache = new Map();
+    state.cryptoTicks = {};
+    state.cryptoRetry = 0;
+    state.lastCryptoEvent = 0;
+
+    const dom = {
+      globalCards: document.getElementById('globalCards'),
+      breadthCards: document.getElementById('breadthCards'),
+      watchlistTBody: document.querySelector('#watchlistTable tbody'),
+      indicatorCards: document.getElementById('indicatorCards'),
+      sectorHeat: document.getElementById('sectorHeat'),
+      moversUp: document.querySelector('#moversUp tbody'),
+      moversDown: document.querySelector('#moversDown tbody'),
+      moversVol: document.querySelector('#moversVol tbody'),
+      flowCards: document.getElementById('flowCards'),
+      valuationGrid: document.getElementById('valuationGrid'),
+      financialBody: document.querySelector('#financialTable tbody'),
+      earningsBody: document.querySelector('#earningsCalendar tbody'),
+      economicBody: document.querySelector('#economicCalendar tbody'),
+      pulseScore: document.getElementById('pulseScore'),
+      pulseTone: document.getElementById('pulseTone'),
+      pulseReadout: document.getElementById('pulseReadout'),
+      pulseEvents: document.getElementById('pulseEvents'),
+      impactChain: document.getElementById('impactChain'),
+      macroRegimeCards: document.getElementById('macroRegimeCards'),
+      vietnamLensCards: document.getElementById('vietnamLensCards'),
+      macroCards: document.getElementById('macroCards'),
+      commoditiesBody: document.querySelector('#commoditiesTable tbody'),
+      fxBody: document.querySelector('#fxTable tbody'),
+      cryptoBody: document.querySelector('#cryptoTable tbody'),
+      bidsBody: document.querySelector('#bidTable tbody'),
+      asksBody: document.querySelector('#askTable tbody'),
+      portfolioBody: document.querySelector('#portfolioTable tbody'),
+      pnlMini: document.getElementById('pnlMini'),
+      riskCards: document.getElementById('riskCards'),
+      alertsList: document.getElementById('alertsList'),
+      screenerResult: document.getElementById('screenerResult'),
+      comparisonResult: document.getElementById('comparisonResult'),
+      summaryBox: document.getElementById('aiSummary'),
+      summarySignals: document.getElementById('summarySignals'),
+      assetBoard: document.getElementById('assetBoard'),
+      assetBoardStatus: document.getElementById('assetBoardStatus'),
+      newsFeed: document.getElementById('newsFeed'),
+      profile: document.getElementById('companyProfile'),
+      actions: document.getElementById('corporateActions'),
+      providerStatus: document.getElementById('provider-status'),
+      tickerBar: document.getElementById('tickerBar')
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const cache = {
+      widthByCanvas: new WeakMap(),
+      formatter: {
+        money: new Intl.NumberFormat('en-US', { maximumFractionDigits: 2, minimumFractionDigits: 0 }),
+        full: new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 })
+      }
+    };
+
+
+    const escapeHTML = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const safeURL = (value) => { try { const u = new URL(value); return ['https:','http:'].includes(u.protocol) && !u.username && !u.password ? u.href : ''; } catch { return ''; } };
+    const numberVN = (value, digits=2) => typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString('vi-VN',{maximumFractionDigits:digits}) : 'N/A';
+    const validNumber = (v) => v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v));
+    const validTime = (v) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v) && Number.isFinite(Date.parse(v)) && Date.parse(v) <= Date.now()+60000;
+    const dateVN = (v) => validTime(v) ? new Intl.DateTimeFormat('vi-VN',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Ho_Chi_Minh'}).format(new Date(v))+' GMT+7' : 'Chưa rõ thời điểm';
+    const labels = {reference:'Định kỳ',snapshot:'Ảnh chụp thị trường',live:'Trực tiếp',cache:'Cache · nguồn lỗi',error:'Nguồn lỗi',unavailable:'Chưa kết nối',archive:'Bản công bố lưu kèm · không tự cập nhật',demo:'DEMO',stale:'Đã cũ / mất kết nối'};
+
+    function normalizeNewsItem(item, index=0) {
+      const raw = item.publishedAt || item.t;
+      return {id:String(item.id || (item.source || '')+':'+index),title:String(item.title || 'Không có tiêu đề'),
+        url:safeURL(item.url),source:String(item.source || 'Chưa rõ nguồn'),publishedAt:validTime(raw)?new Date(raw).toISOString():null,
+        category:String(item.category || item.cat || 'Markets'),region:String(item.region || 'Global'),
+        tickers:(Array.isArray(item.tickers)?item.tickers:item.tickers?[item.tickers]:[]).map(String),
+        topics:Array.isArray(item.topics)?item.topics.map(String):[],sentiment:['positive','negative','neutral'].includes(item.sentiment)?item.sentiment:'N/A',
+        impact:['high','medium','low'].includes(item.impact)?item.impact:'N/A',summary:String(item.summary || ''),
+        whyItMatters:String(item.whyItMatters || item.why || ''),confidence:String(item.confidence || 'Chưa đánh giá'),
+        kind:['Fact','Signal','Interpretation','Risk'].includes(item.kind)?item.kind:'Chưa phân loại',
+        isDemo:state.providerMode==='demo'||item.isDemo===true};
+    }
+    function dedupeNews(items) {
+      const urls=new Set(), ids=new Set(), titles=new Set();
+      return items.filter(item=>{
+        let url=item.url;
+        if(url){const u=new URL(url);u.hash='';for(const key of [...u.searchParams.keys()])if(/^(utm_|fbclid|gclid)/i.test(key))u.searchParams.delete(key);url=u.href;}
+        const title=item.title.toLocaleLowerCase('vi').normalize('NFC').replace(/[^\p{L}\p{N}]+/gu,' ').trim();
+        const id=item.source+'|'+item.id;
+        if((url&&urls.has(url))||ids.has(id)||titles.has(title))return false;
+        if(url)urls.add(url);ids.add(id);titles.add(title);return true;
+      }).sort((a,b)=>(Date.parse(b.publishedAt)||0)-(Date.parse(a.publishedAt)||0));
+    }
+    function getNewsFeed(resource='news') {
+      const category={globalNews:'World',macroNews:'Macro',vietnamNews:'Vietnam',marketNews:'Markets',companyNews:'Companies'}[resource];
+      return dedupeNews((DEMO.news||[]).map(normalizeNewsItem)).filter(x=>!category||x.category===category);
+    }
+    function cancelled() { return new DOMException('Provider changed','AbortError'); }
+    async function fetchJSON(url) {
+      const generation=state.generation,ctrl=new AbortController();state.requests.add(ctrl);
+      const timer=setTimeout(()=>ctrl.abort(),10000);
+      try {
+        const response=await fetch(url,{signal:ctrl.signal,headers:{Accept:'application/json'},credentials:'omit'});
+        if(!response.ok)throw new Error('HTTP '+response.status);
+        const value=await response.json();
+        if(generation!==state.generation)throw cancelled();
+        return value;
+      } finally {clearTimeout(timer);state.requests.delete(ctrl);}
+    }
+    async function publicSource(key,url,validate,ttl=900000) {
+      const generation=state.generation;
+      const old=state.sourceCache.get(key);
+      if(old&&!state.forceRefresh&&Date.now()-Date.parse(old.fetchedAt)<ttl)return old;
+      if(state.pending.has(key))return state.pending.get(key);
+      const request=(async()=>{
+        try {
+          if(state.forceError)throw new Error('Mô phỏng lỗi');
+          const data=validate(await fetchJSON(url));
+          if(generation!==state.generation)throw cancelled();
+          const result={data,source:url,fetchedAt:new Date().toISOString(),status:'reference',isDemo:false};
+          state.sourceCache.set(key,result);return result;
+        } catch(error) {
+          if(generation!==state.generation)throw cancelled();
+          if(old)return {...old,status:'cache',error:String(error.message)};
+          return {data:[],source:url,fetchedAt:null,status:'error',error:String(error.message),isDemo:false};
+        } finally { if(generation===state.generation)state.pending.delete(key); }
+      })();
+      state.pending.set(key,request);return request;
+    }
+    function parseRates(payload) {
+      if(!Array.isArray(payload))throw Error('Sai cấu trúc tỷ giá');
+      const rows=payload.filter(x=>validNumber(x.rate)&&Number(x.rate)>0&&validTime(x.date)&&x.base==='USD'&&['EUR','VND'].includes(x.quote));
+      if(!rows.length)throw Error('Không có tỷ giá hợp lệ');
+      return rows.map(x=>({...x,rate:Number(x.rate)})).sort((a,b)=>a.date.localeCompare(b.date));
+    }
+    function parseWB(payload) {
+      if(!Array.isArray(payload?.[1]))throw Error('Sai cấu trúc World Bank');
+      if(Number(payload[0]?.pages)>1)throw Error('Dữ liệu phân trang chưa đầy đủ');
+      const rows=payload[1].filter(x=>validNumber(x.value)&&/^\d{4}$/.test(x.date)&&Number(x.date)<=new Date().getUTCFullYear()&&['WLD','USA','CHN','VNM'].includes(x.countryiso3code));
+      if(!rows.length)throw Error('Không có quan sát hợp lệ');
+      return rows.map(x=>({...x,value:Number(x.value)})).sort((a,b)=>a.date.localeCompare(b.date));
+    }
+    function parseTicks(data) {
+      if(!Array.isArray(data))throw Error('Sai cấu trúc Binance');
+      const rows=data.filter(x=>['BTCUSDT','ETHUSDT'].includes(x.symbol)&&validNumber(x.lastPrice)&&Number(x.lastPrice)>0&&validNumber(x.priceChangePercent)&&validNumber(x.closeTime)&&Number(x.closeTime)>0&&Number(x.closeTime)<=Date.now()+60000);
+      if(!rows.length)throw Error('Không có giá hợp lệ');return rows;
+    }
+    async function publicPanorama() {
+      const year=new Date().getUTCFullYear(),start=new Date(Date.now()-180*86400000).toISOString().slice(0,10);
+      const results=await Promise.allSettled([
+        ...['NY.GDP.MKTP.KD.ZG','FP.CPI.TOTL.ZG','BX.KLT.DINV.CD.WD'].map(code=>publicSource('wb:'+code,'https://api.worldbank.org/v2/country/WLD;USA;CHN;VNM/indicator/'+code+'?format=json&per_page=500&date='+(year-11)+':'+year,parseWB,86400000)),
+        publicSource('fx-history','https://api.frankfurter.dev/v2/rates?base=USD&quotes=VND,EUR&from='+start+'&group=week&expand=providers',parseRates,3600000)
+      ]);
+      const failure={data:[],status:'error',source:'',fetchedAt:null};
+      const values=results.map(x=>x.status==='fulfilled'?x.value:failure);
+      return {gdp:values[0],cpi:values[1],fdi:values[2],fx:values[3]};
+    }
+    async function publicAssetBoard() {
+      const [crypto,fx]=await Promise.all([
+        publicSource('crypto','https://data-api.binance.vision/api/v3/ticker/24hr?symbols='+encodeURIComponent(JSON.stringify(['BTCUSDT','ETHUSDT'])),parseTicks,60000),
+        publicSource('fx-latest','https://api.frankfurter.dev/v2/rates?base=USD&quotes=VND,EUR&expand=providers',parseRates,3600000)
+      ]);
+      const missing=(name)=>[name,'N/A','Chưa kết nối','neutral',{status:'unavailable'}];
+      const groups=[
+        {title:'Chứng khoán thế giới',rows:['S&P 500','Nasdaq 100','Euro Stoxx 50','Nikkei 225','Shanghai Composite'].map(missing)},
+        {title:'Chứng khoán Việt Nam',rows:['VN-Index','VN30','HNX-Index','UPCoM-Index'].map(missing)},
+        {title:'Hàng hóa · bình quân tháng, bản lưu kèm',rows:commodityBoardRows()},
+        {title:'Tỷ giá & lợi suất',rows:['USD/VND','EUR/USD','DXY','US 2Y','US 10Y'].map(missing)},
+        {title:'Crypto · biến động 24 giờ',rows:['Bitcoin','Ethereum'].map(missing)}
+      ];
+      for(const [symbol,name] of [['BTCUSDT','Bitcoin'],['ETHUSDT','Ethereum']]) {
+        const tick=crypto.data.find(x=>x.symbol===symbol),stream=state.cryptoTicks[symbol];
+        const useStream=stream&&(!tick||stream.time>=Number(tick.closeTime));
+        if(!tick&&!useStream) {groups[4].rows[groups[4].rows.findIndex(x=>x[0]===name)]=[name,'N/A','Nguồn lỗi','neutral',{...crypto,status:'error'}];continue;}
+        const value=useStream?stream.price:Number(tick.lastPrice),change=useStream?stream.change:Number(tick.priceChangePercent),time=useStream?stream.time:Number(tick.closeTime);
+        const fresh=useStream&&Date.now()-time<30000&&state.cryptoSocket?.readyState===1;
+        const meta={source:'https://data-api.binance.vision/api/v3/ticker/24hr',observedAt:new Date(time).toISOString(),fetchedAt:useStream?stream.receivedAt:crypto.fetchedAt,unit:'USDT',status:fresh?'live':crypto.status==='cache'?'cache':Date.now()-time>60000?'stale':'snapshot'};
+        groups[4].rows[groups[4].rows.findIndex(x=>x[0]===name)]=[name,numberVN(value)+' USDT',(change>0?'+':'')+numberVN(change)+'% / 24h',change>=0?'up':'down',meta];
+      }
+      for(const [quote,name] of [['VND','USD/VND'],['EUR','EUR/USD']]){
+        const row=fx.data.filter(x=>x.quote===quote).at(-1),i=groups[3].rows.findIndex(x=>x[0]===name);
+        groups[3].rows[i]=row?[name,numberVN(quote==='EUR'?1/row.rate:row.rate,quote==='EUR'?4:2),'Tham chiếu · '+row.date,'neutral',{...fx,data:undefined,observedAt:row.date,unit:quote==='EUR'?'USD / EUR':'VND / USD'}]:[name,'N/A','Nguồn lỗi','neutral',{...fx,data:undefined}];
+      }
+      state.publicAssetBoard=groups;return groups;
+    }
+    function stopPublicStream() {
+      clearTimeout(state.cryptoTimer);state.cryptoTimer=null;
+      const socket=state.cryptoSocket;state.cryptoSocket=null;
+      if(socket){socket.onclose=null;socket.onmessage=null;socket.close();}
+    }
+    function connectPublicCryptoStream() {
+      if(state.providerMode!=='public'||state.activeWorkspace!=='research'||state.cryptoSocket||!('WebSocket'in window)||document.hidden)return;
+      const generation=state.generation;
+      const socket=new WebSocket('wss://data-stream.binance.vision:443/stream?streams=btcusdt@ticker/ethusdt@ticker');
+      state.cryptoSocket=socket;state.cryptoStartedAt=Date.now();
+      socket.onmessage=(event)=>{
+        if(generation!==state.generation||state.providerMode!=='public')return;
+        let tick;try{tick=JSON.parse(event.data).data;}catch{return;}
+        if(!tick||!['BTCUSDT','ETHUSDT'].includes(tick.s)||!validNumber(tick.c)||Number(tick.c)<=0||!validNumber(tick.P)||!validNumber(tick.E)||Number(tick.E)<=0||Number(tick.E)>Date.now()+60000)return;
+        if(state.cryptoTicks[tick.s]?.time>=Number(tick.E))return;
+        state.cryptoTicks[tick.s]={price:Number(tick.c),change:Number(tick.P),time:Number(tick.E),receivedAt:new Date().toISOString()};
+        state.lastCryptoEvent=Date.now();state.cryptoRetry=0;
+        if(state.publicAssetBoard&&state.activeWorkspace==='research'){
+          const group=state.publicAssetBoard.find(x=>x.title.startsWith('Crypto'));
+          const name=tick.s==='BTCUSDT'?'Bitcoin':'Ethereum',idx=group.rows.findIndex(x=>x[0]===name),fresh=Date.now()-Number(tick.E)<30000;
+          group.rows[idx]=[name,numberVN(Number(tick.c))+' USDT',(Number(tick.P)>0?'+':'')+numberVN(Number(tick.P))+'% / 24h',Number(tick.P)>=0?'up':'down',{source:'https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams',observedAt:new Date(Number(tick.E)).toISOString(),fetchedAt:new Date().toISOString(),unit:'USDT',status:fresh?'live':'stale'}];
+          renderAssetBoard(state.publicAssetBoard);
+        }
+      };
+      socket.onerror=()=>socket.close();
+      socket.onclose=()=>{
+        if(state.cryptoSocket!==socket)return;state.cryptoSocket=null;markCryptoStale();
+        if(generation!==state.generation||state.providerMode!=='public'||state.activeWorkspace!=='research'||document.hidden)return;
+        state.cryptoTimer=setTimeout(connectPublicCryptoStream,Math.min(60000,1000*2**Math.min(state.cryptoRetry++,6))+Math.random()*500);
+      };
+    }
+    function markCryptoStale() {
+      if(!state.publicAssetBoard)return;
+      state.publicAssetBoard.forEach(g=>g.rows.forEach(r=>{if(r[4]?.status==='live'&&(state.cryptoSocket?.readyState!==1||Date.now()-Date.parse(r[4].observedAt)>30000))r[4].status='stale';}));
+      if(state.providerMode==='public'&&state.activeWorkspace==='research')renderAssetBoard(state.publicAssetBoard);
+    }
+    setInterval(()=>{
+      markCryptoStale();
+      if(state.cryptoSocket&&Date.now()-Math.max(state.lastCryptoEvent,state.cryptoStartedAt||0)>45000)state.cryptoSocket.close();
+    },10000);
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){stopPublicStream();markCryptoStale();}else connectPublicCryptoStream();});
+
+    const COMMODITY_SNAPSHOT = {"isDemo":false,"status":"archive","source":"https://thedocs.worldbank.org/en/doc/74e8be41ceb20fa0da750cda2f6b9e4e-0050012026/related/CMO-Historical-Data-Monthly.xlsx","sourcePage":"https://www.worldbank.org/en/research/commodity-markets","sourceName":"World Bank Commodity Price Data (Pink Sheet)","sourceUpdatedAt":"2026-09-02","fetchedAt":"2026-09-23T06:55:32.080869+00:00","frequency":"monthly","sheet":"Monthly Prices","rowRange":[771,806],"sha256":"9fdcfa8a2aed9a1bb545a10c1a5ce036c6a0acd4766f450424ca800b4b5a0225","series":[{"id":"Gold","name":"Vàng","unit":"($/troy oz)","column":70,"points":[{"date":"2023-09","value":1916.0},{"date":"2023-10","value":1916.0},{"date":"2023-11","value":1984.0},{"date":"2023-12","value":2026.0},{"date":"2024-01","value":2034.0},{"date":"2024-02","value":2023.0},{"date":"2024-03","value":2158.0},{"date":"2024-04","value":2331.0},{"date":"2024-05","value":2351.0},{"date":"2024-06","value":2326.0},{"date":"2024-07","value":2398.0},{"date":"2024-08","value":2470.0},{"date":"2024-09","value":2571.0},{"date":"2024-10","value":2690.0},{"date":"2024-11","value":2651.0},{"date":"2024-12","value":2648.0},{"date":"2025-01","value":2710.0},{"date":"2025-02","value":2895.0},{"date":"2025-03","value":2983.0},{"date":"2025-04","value":3218.0},{"date":"2025-05","value":3309.0},{"date":"2025-06","value":3353.0},{"date":"2025-07","value":3340.0},{"date":"2025-08","value":3368.0},{"date":"2025-09","value":3668.0},{"date":"2025-10","value":4058.0},{"date":"2025-11","value":4087.0},{"date":"2025-12","value":4309.0},{"date":"2026-01","value":4753.0},{"date":"2026-02","value":5020.0},{"date":"2026-03","value":4856.0},{"date":"2026-04","value":4721.0},{"date":"2026-05","value":4587.0},{"date":"2026-06","value":4228.0},{"date":"2026-07","value":4073.0},{"date":"2026-08","value":4411.0}]},{"id":"Silver","name":"Bạc","unit":"($/troy oz)","column":72,"points":[{"date":"2023-09","value":23.1},{"date":"2023-10","value":22.4},{"date":"2023-11","value":23.5},{"date":"2023-12","value":23.9},{"date":"2024-01","value":22.9},{"date":"2024-02","value":22.7},{"date":"2024-03","value":24.5},{"date":"2024-04","value":27.5},{"date":"2024-05","value":29.4},{"date":"2024-06","value":29.6},{"date":"2024-07","value":29.8},{"date":"2024-08","value":28.5},{"date":"2024-09","value":30.1},{"date":"2024-10","value":32.4},{"date":"2024-11","value":31.1},{"date":"2024-12","value":30.8},{"date":"2025-01","value":30.4},{"date":"2025-02","value":32.2},{"date":"2025-03","value":33.2},{"date":"2025-04","value":32.2},{"date":"2025-05","value":32.8},{"date":"2025-06","value":36.0},{"date":"2025-07","value":37.7},{"date":"2025-08","value":38.2},{"date":"2025-09","value":42.8},{"date":"2025-10","value":49.4},{"date":"2025-11","value":50.4},{"date":"2025-12","value":62.3},{"date":"2026-01","value":92.1},{"date":"2026-02","value":81.9},{"date":"2026-03","value":77.9},{"date":"2026-04","value":75.9},{"date":"2026-05","value":78.0},{"date":"2026-06","value":66.7},{"date":"2026-07","value":58.8},{"date":"2026-08","value":65.4}]},{"id":"Platinum","name":"Bạch kim","unit":"($/troy oz)","column":71,"points":[{"date":"2023-09","value":921.0},{"date":"2023-10","value":892.0},{"date":"2023-11","value":906.0},{"date":"2023-12","value":935.0},{"date":"2024-01","value":926.0},{"date":"2024-02","value":894.0},{"date":"2024-03","value":909.0},{"date":"2024-04","value":940.0},{"date":"2024-05","value":1015.0},{"date":"2024-06","value":985.0},{"date":"2024-07","value":979.0},{"date":"2024-08","value":945.0},{"date":"2024-09","value":967.0},{"date":"2024-10","value":999.0},{"date":"2024-11","value":966.0},{"date":"2024-12","value":938.0},{"date":"2025-01","value":949.0},{"date":"2025-02","value":978.0},{"date":"2025-03","value":980.0},{"date":"2025-04","value":959.0},{"date":"2025-05","value":980.0},{"date":"2025-06","value":1251.0},{"date":"2025-07","value":1391.0},{"date":"2025-08","value":1343.0},{"date":"2025-09","value":1435.0},{"date":"2025-10","value":1616.0},{"date":"2025-11","value":1565.0},{"date":"2025-12","value":1893.0},{"date":"2026-01","value":2434.0},{"date":"2026-02","value":2137.0},{"date":"2026-03","value":2046.0},{"date":"2026-04","value":2028.0},{"date":"2026-05","value":1998.0},{"date":"2026-06","value":1726.0},{"date":"2026-07","value":1622.0},{"date":"2026-08","value":1780.0}]},{"id":"Crude oil, Brent","name":"Dầu Brent","unit":"($/bbl)","column":3,"points":[{"date":"2023-09","value":94.0},{"date":"2023-10","value":91.1},{"date":"2023-11","value":83.2},{"date":"2023-12","value":77.9},{"date":"2024-01","value":80.2},{"date":"2024-02","value":83.8},{"date":"2024-03","value":85.4},{"date":"2024-04","value":90.1},{"date":"2024-05","value":82.0},{"date":"2024-06","value":82.6},{"date":"2024-07","value":85.3},{"date":"2024-08","value":80.9},{"date":"2024-09","value":74.3},{"date":"2024-10","value":75.7},{"date":"2024-11","value":74.4},{"date":"2024-12","value":73.8},{"date":"2025-01","value":79.2},{"date":"2025-02","value":75.2},{"date":"2025-03","value":72.6},{"date":"2025-04","value":67.7},{"date":"2025-05","value":64.2},{"date":"2025-06","value":71.5},{"date":"2025-07","value":71.0},{"date":"2025-08","value":68.2},{"date":"2025-09","value":68.0},{"date":"2025-10","value":64.7},{"date":"2025-11","value":63.6},{"date":"2025-12","value":62.7},{"date":"2026-01","value":66.8},{"date":"2026-02","value":71.1},{"date":"2026-03","value":103.7},{"date":"2026-04","value":120.4},{"date":"2026-05","value":107.5},{"date":"2026-06","value":85.4},{"date":"2026-07","value":83.4},{"date":"2026-08","value":90.9}]},{"id":"Crude oil, WTI","name":"Dầu WTI","unit":"($/bbl)","column":5,"points":[{"date":"2023-09","value":89.6},{"date":"2023-10","value":85.6},{"date":"2023-11","value":77.4},{"date":"2023-12","value":72.1},{"date":"2024-01","value":73.9},{"date":"2024-02","value":76.7},{"date":"2024-03","value":80.5},{"date":"2024-04","value":84.6},{"date":"2024-05","value":78.8},{"date":"2024-06","value":78.9},{"date":"2024-07","value":80.5},{"date":"2024-08","value":75.6},{"date":"2024-09","value":69.6},{"date":"2024-10","value":71.6},{"date":"2024-11","value":69.7},{"date":"2024-12","value":69.8},{"date":"2025-01","value":75.1},{"date":"2025-02","value":71.3},{"date":"2025-03","value":67.8},{"date":"2025-04","value":63.1},{"date":"2025-05","value":61.0},{"date":"2025-06","value":67.5},{"date":"2025-07","value":67.4},{"date":"2025-08","value":64.1},{"date":"2025-09","value":63.7},{"date":"2025-10","value":60.2},{"date":"2025-11","value":59.6},{"date":"2025-12","value":57.9},{"date":"2026-01","value":60.3},{"date":"2026-02","value":64.6},{"date":"2026-03","value":91.2},{"date":"2026-04","value":98.6},{"date":"2026-05","value":99.1},{"date":"2026-06","value":81.9},{"date":"2026-07","value":79.4},{"date":"2026-08","value":82.7}]},{"id":"Crude oil, average","name":"Dầu thô bình quân","unit":"($/bbl)","column":2,"points":[{"date":"2023-09","value":92.2},{"date":"2023-10","value":89.1},{"date":"2023-11","value":81.4},{"date":"2023-12","value":75.7},{"date":"2024-01","value":77.7},{"date":"2024-02","value":80.5},{"date":"2024-03","value":83.5},{"date":"2024-04","value":88.0},{"date":"2024-05","value":81.4},{"date":"2024-06","value":81.2},{"date":"2024-07","value":83.3},{"date":"2024-08","value":78.1},{"date":"2024-09","value":72.4},{"date":"2024-10","value":74.0},{"date":"2024-11","value":72.3},{"date":"2024-12","value":72.3},{"date":"2025-01","value":78.2},{"date":"2025-02","value":73.8},{"date":"2025-03","value":70.7},{"date":"2025-04","value":65.9},{"date":"2025-05","value":62.7},{"date":"2025-06","value":69.1},{"date":"2025-07","value":69.2},{"date":"2025-08","value":66.7},{"date":"2025-09","value":66.5},{"date":"2025-10","value":63.0},{"date":"2025-11","value":62.3},{"date":"2025-12","value":60.9},{"date":"2026-01","value":63.7},{"date":"2026-02","value":68.0},{"date":"2026-03","value":95.6},{"date":"2026-04","value":103.9},{"date":"2026-05","value":100.4},{"date":"2026-06","value":81.7},{"date":"2026-07","value":79.8},{"date":"2026-08","value":84.4}]},{"id":"Natural gas, US","name":"Khí tự nhiên Mỹ","unit":"($/mmbtu)","column":8,"points":[{"date":"2023-09","value":2.64},{"date":"2023-10","value":2.99},{"date":"2023-11","value":2.71},{"date":"2023-12","value":2.53},{"date":"2024-01","value":3.18},{"date":"2024-02","value":1.72},{"date":"2024-03","value":1.5},{"date":"2024-04","value":1.6},{"date":"2024-05","value":2.13},{"date":"2024-06","value":2.51},{"date":"2024-07","value":2.08},{"date":"2024-08","value":1.99},{"date":"2024-09","value":2.25},{"date":"2024-10","value":2.21},{"date":"2024-11","value":2.1},{"date":"2024-12","value":3.02},{"date":"2025-01","value":4.1},{"date":"2025-02","value":4.22},{"date":"2025-03","value":4.13},{"date":"2025-04","value":3.4},{"date":"2025-05","value":3.12},{"date":"2025-06","value":3.02},{"date":"2025-07","value":3.19},{"date":"2025-08","value":2.91},{"date":"2025-09","value":2.97},{"date":"2025-10","value":3.2},{"date":"2025-11","value":3.79},{"date":"2025-12","value":4.25},{"date":"2026-01","value":7.58},{"date":"2026-02","value":3.61},{"date":"2026-03","value":3.06},{"date":"2026-04","value":2.77},{"date":"2026-05","value":2.93},{"date":"2026-06","value":3.15},{"date":"2026-07","value":2.89},{"date":"2026-08","value":2.77}]},{"id":"Natural gas, Europe","name":"Khí tự nhiên châu Âu","unit":"($/mmbtu)","column":9,"points":[{"date":"2023-09","value":11.55},{"date":"2023-10","value":14.57},{"date":"2023-11","value":14.49},{"date":"2023-12","value":11.51},{"date":"2024-01","value":9.56},{"date":"2024-02","value":8.15},{"date":"2024-03","value":8.55},{"date":"2024-04","value":9.09},{"date":"2024-05","value":10.12},{"date":"2024-06","value":10.87},{"date":"2024-07","value":10.35},{"date":"2024-08","value":12.37},{"date":"2024-09","value":11.78},{"date":"2024-10","value":12.92},{"date":"2024-11","value":13.93},{"date":"2024-12","value":13.86},{"date":"2025-01","value":14.66},{"date":"2025-02","value":15.34},{"date":"2025-03","value":13.24},{"date":"2025-04","value":11.59},{"date":"2025-05","value":11.66},{"date":"2025-06","value":12.37},{"date":"2025-07","value":11.62},{"date":"2025-08","value":11.15},{"date":"2025-09","value":11.12},{"date":"2025-10","value":10.89},{"date":"2025-11","value":10.42},{"date":"2025-12","value":9.48},{"date":"2026-01","value":11.76},{"date":"2026-02","value":11.24},{"date":"2026-03","value":17.91},{"date":"2026-04","value":15.41},{"date":"2026-05","value":16.17},{"date":"2026-06","value":15.17},{"date":"2026-07","value":18.06},{"date":"2026-08","value":21.11}]},{"id":"Copper","name":"Đồng","unit":"($/mt)","column":65,"points":[{"date":"2023-09","value":8277.0},{"date":"2023-10","value":7937.0},{"date":"2023-11","value":8190.0},{"date":"2023-12","value":8400.0},{"date":"2024-01","value":8339.0},{"date":"2024-02","value":8305.0},{"date":"2024-03","value":8689.0},{"date":"2024-04","value":9464.0},{"date":"2024-05","value":10139.0},{"date":"2024-06","value":9648.0},{"date":"2024-07","value":9385.0},{"date":"2024-08","value":8972.0},{"date":"2024-09","value":9237.0},{"date":"2024-10","value":9534.0},{"date":"2024-11","value":9076.0},{"date":"2024-12","value":8916.0},{"date":"2025-01","value":8991.0},{"date":"2025-02","value":9331.0},{"date":"2025-03","value":9740.0},{"date":"2025-04","value":9177.0},{"date":"2025-05","value":9533.0},{"date":"2025-06","value":9835.0},{"date":"2025-07","value":9771.0},{"date":"2025-08","value":9670.0},{"date":"2025-09","value":9984.0},{"date":"2025-10","value":10740.0},{"date":"2025-11","value":10812.0},{"date":"2025-12","value":11785.0},{"date":"2026-01","value":13012.0},{"date":"2026-02","value":12951.0},{"date":"2026-03","value":12529.0},{"date":"2026-04","value":12951.0},{"date":"2026-05","value":13543.0},{"date":"2026-06","value":13552.0},{"date":"2026-07","value":13543.0},{"date":"2026-08","value":14326.0}]},{"id":"Aluminum","name":"Nhôm","unit":"($/mt)","column":63,"points":[{"date":"2023-09","value":2185.0},{"date":"2023-10","value":2192.0},{"date":"2023-11","value":2202.0},{"date":"2023-12","value":2182.0},{"date":"2024-01","value":2193.0},{"date":"2024-02","value":2179.0},{"date":"2024-03","value":2226.0},{"date":"2024-04","value":2506.0},{"date":"2024-05","value":2565.0},{"date":"2024-06","value":2498.0},{"date":"2024-07","value":2349.0},{"date":"2024-08","value":2344.0},{"date":"2024-09","value":2450.0},{"date":"2024-10","value":2596.0},{"date":"2024-11","value":2582.0},{"date":"2024-12","value":2541.0},{"date":"2025-01","value":2573.0},{"date":"2025-02","value":2658.0},{"date":"2025-03","value":2658.0},{"date":"2025-04","value":2372.0},{"date":"2025-05","value":2449.0},{"date":"2025-06","value":2526.0},{"date":"2025-07","value":2606.0},{"date":"2025-08","value":2597.0},{"date":"2025-09","value":2653.0},{"date":"2025-10","value":2793.0},{"date":"2025-11","value":2819.0},{"date":"2025-12","value":2876.0},{"date":"2026-01","value":3142.0},{"date":"2026-02","value":3065.0},{"date":"2026-03","value":3373.0},{"date":"2026-04","value":3600.0},{"date":"2026-05","value":3666.0},{"date":"2026-06","value":3439.0},{"date":"2026-07","value":3161.0},{"date":"2026-08","value":3251.0}]},{"id":"Iron ore, cfr spot","name":"Quặng sắt CFR","unit":"($/dmtu)","column":64,"points":[{"date":"2023-09","value":121.0},{"date":"2023-10","value":119.0},{"date":"2023-11","value":131.1},{"date":"2023-12","value":137.1},{"date":"2024-01","value":135.8},{"date":"2024-02","value":124.4},{"date":"2024-03","value":109.8},{"date":"2024-04","value":112.8},{"date":"2024-05","value":118.9},{"date":"2024-06","value":107.5},{"date":"2024-07","value":106.9},{"date":"2024-08","value":99.9},{"date":"2024-09","value":92.8},{"date":"2024-10","value":101.4},{"date":"2024-11","value":100.5},{"date":"2024-12","value":102.2},{"date":"2025-01","value":99.6},{"date":"2025-02","value":105.1},{"date":"2025-03","value":100.1},{"date":"2025-04","value":97.2},{"date":"2025-05","value":97.0},{"date":"2025-06","value":92.3},{"date":"2025-07","value":97.3},{"date":"2025-08","value":99.7},{"date":"2025-09","value":103.3},{"date":"2025-10","value":103.5},{"date":"2025-11","value":102.5},{"date":"2025-12","value":104.6},{"date":"2026-01","value":105.5},{"date":"2026-02","value":98.8},{"date":"2026-03","value":104.5},{"date":"2026-04","value":106.1},{"date":"2026-05","value":108.6},{"date":"2026-06","value":100.8},{"date":"2026-07","value":98.2},{"date":"2026-08","value":96.3}]},{"id":"Coffee, Robusta","name":"Cà phê Robusta","unit":"($/kg)","column":14,"points":[{"date":"2023-09","value":2.73},{"date":"2023-10","value":2.62},{"date":"2023-11","value":2.7},{"date":"2023-12","value":2.99},{"date":"2024-01","value":3.26},{"date":"2024-02","value":3.38},{"date":"2024-03","value":3.66},{"date":"2024-04","value":4.23},{"date":"2024-05","value":4.04},{"date":"2024-06","value":4.5},{"date":"2024-07","value":4.73},{"date":"2024-08","value":4.73},{"date":"2024-09","value":5.33},{"date":"2024-10","value":4.89},{"date":"2024-11","value":4.98},{"date":"2024-12","value":5.22},{"date":"2025-01","value":5.41},{"date":"2025-02","value":5.81},{"date":"2025-03","value":5.69},{"date":"2025-04","value":5.43},{"date":"2025-05","value":5.24},{"date":"2025-06","value":4.33},{"date":"2025-07","value":3.69},{"date":"2025-08","value":4.39},{"date":"2025-09","value":4.66},{"date":"2025-10","value":4.74},{"date":"2025-11","value":4.74},{"date":"2025-12","value":4.2},{"date":"2026-01","value":4.24},{"date":"2026-02","value":3.96},{"date":"2026-03","value":3.9},{"date":"2026-04","value":3.63},{"date":"2026-05","value":3.67},{"date":"2026-06","value":3.73},{"date":"2026-07","value":4.07},{"date":"2026-08","value":3.98}]},{"id":"Coffee, Arabica","name":"Cà phê Arabica","unit":"($/kg)","column":13,"points":[{"date":"2023-09","value":4.05},{"date":"2023-10","value":4.05},{"date":"2023-11","value":4.35},{"date":"2023-12","value":4.65},{"date":"2024-01","value":4.47},{"date":"2024-02","value":4.6},{"date":"2024-03","value":4.61},{"date":"2024-04","value":5.27},{"date":"2024-05","value":5.08},{"date":"2024-06","value":5.48},{"date":"2024-07","value":5.67},{"date":"2024-08","value":5.76},{"date":"2024-09","value":6.12},{"date":"2024-10","value":6.1},{"date":"2024-11","value":6.72},{"date":"2024-12","value":7.57},{"date":"2025-01","value":7.81},{"date":"2025-02","value":9.05},{"date":"2025-03","value":8.92},{"date":"2025-04","value":8.64},{"date":"2025-05","value":8.77},{"date":"2025-06","value":8.01},{"date":"2025-07","value":7.18},{"date":"2025-08","value":8.08},{"date":"2025-09","value":8.83},{"date":"2025-10","value":8.9},{"date":"2025-11","value":9.05},{"date":"2025-12","value":8.4},{"date":"2026-01","value":8.02},{"date":"2026-02","value":7.08},{"date":"2026-03","value":7.37},{"date":"2026-04","value":7.3},{"date":"2026-05","value":6.95},{"date":"2026-06","value":6.79},{"date":"2026-07","value":7.91},{"date":"2026-08","value":7.97}]},{"id":"Rice, Viet Namese 5%","name":"Gạo Việt Nam 5% tấm","unit":"($/mt)","column":36,"points":[{"date":"2023-09","value":594.4},{"date":"2023-10","value":616.2},{"date":"2023-11","value":629.4},{"date":"2023-12","value":632.9},{"date":"2024-01","value":625.5},{"date":"2024-02","value":614.3},{"date":"2024-03","value":585.4},{"date":"2024-04","value":571.5},{"date":"2024-05","value":568.0},{"date":"2024-06","value":561.6},{"date":"2024-07","value":552.4},{"date":"2024-08","value":535.3},{"date":"2024-09","value":540.5},{"date":"2024-10","value":529.8},{"date":"2024-11","value":509.7},{"date":"2024-12","value":495.7},{"date":"2025-01","value":447.3},{"date":"2025-02","value":401.7},{"date":"2025-03","value":378.4},{"date":"2025-04","value":377.8},{"date":"2025-05","value":379.3},{"date":"2025-06","value":377.2},{"date":"2025-07","value":370.6},{"date":"2025-08","value":378.8},{"date":"2025-09","value":371.5},{"date":"2025-10","value":365.6},{"date":"2025-11","value":359.8},{"date":"2025-12","value":351.9},{"date":"2026-01","value":351.2},{"date":"2026-02","value":349.1},{"date":"2026-03","value":345.8},{"date":"2026-04","value":352.9},{"date":"2026-05","value":376.3},{"date":"2026-06","value":391.3},{"date":"2026-07","value":396.1},{"date":"2026-08","value":410.9}]},{"id":"Wheat, US SRW","name":"Lúa mì Mỹ SRW","unit":"($/mt)","column":37,"points":[{"date":"2023-09","value":230.6},{"date":"2023-10","value":236.6},{"date":"2023-11","value":241.0},{"date":"2023-12","value":255.0},{"date":"2024-01","value":247.9},{"date":"2024-02","value":246.2},{"date":"2024-03","value":228.5},{"date":"2024-04","value":227.8},{"date":"2024-05","value":253.2},{"date":"2024-06","value":230.6},{"date":"2024-07","value":218.8},{"date":"2024-08","value":205.8},{"date":"2024-09","value":219.2},{"date":"2024-10","value":233.3},{"date":"2024-11","value":229.0},{"date":"2024-12","value":230.3},{"date":"2025-01","value":230.6},{"date":"2025-02","value":243.5},{"date":"2025-03","value":227.5},{"date":"2025-04","value":219.6},{"date":"2025-05","value":221.3},{"date":"2025-06","value":217.3},{"date":"2025-07","value":210.6},{"date":"2025-08","value":200.3},{"date":"2025-09","value":207.0},{"date":"2025-10","value":209.3},{"date":"2025-11","value":225.2},{"date":"2025-12","value":223.2},{"date":"2026-01","value":217.7},{"date":"2026-02","value":232.4},{"date":"2026-03","value":247.4},{"date":"2026-04","value":246.5},{"date":"2026-05","value":259.5},{"date":"2026-06","value":237.5},{"date":"2026-07","value":258.1},{"date":"2026-08","value":263.2}]},{"id":"Soybeans","name":"Đậu tương","unit":"($/mt)","column":25,"points":[{"date":"2023-09","value":619.0},{"date":"2023-10","value":530.0},{"date":"2023-11","value":553.0},{"date":"2023-12","value":547.0},{"date":"2024-01","value":547.0},{"date":"2024-02","value":520.0},{"date":"2024-03","value":487.0},{"date":"2024-04","value":477.0},{"date":"2024-05","value":490.0},{"date":"2024-06","value":480.0},{"date":"2024-07","value":470.0},{"date":"2024-08","value":400.0},{"date":"2024-09","value":391.0},{"date":"2024-10","value":442.0},{"date":"2024-11","value":436.0},{"date":"2024-12","value":409.0},{"date":"2025-01","value":411.0},{"date":"2025-02","value":412.0},{"date":"2025-03","value":401.0},{"date":"2025-04","value":408.0},{"date":"2025-05","value":414.0},{"date":"2025-06","value":416.0},{"date":"2025-07","value":410.0},{"date":"2025-08","value":407.0},{"date":"2025-09","value":404.0},{"date":"2025-10","value":404.0},{"date":"2025-11","value":446.0},{"date":"2025-12","value":440.0},{"date":"2026-01","value":425.0},{"date":"2026-02","value":459.0},{"date":"2026-03","value":473.0},{"date":"2026-04","value":463.0},{"date":"2026-05","value":473.0},{"date":"2026-06","value":464.0},{"date":"2026-07","value":478.0},{"date":"2026-08","value":482.0}]},{"id":"Palm oil","name":"Dầu cọ","unit":"($/mt)","column":23,"points":[{"date":"2023-09","value":830.0},{"date":"2023-10","value":804.0},{"date":"2023-11","value":830.0},{"date":"2023-12","value":814.0},{"date":"2024-01","value":845.0},{"date":"2024-02","value":857.0},{"date":"2024-03","value":943.0},{"date":"2024-04","value":936.0},{"date":"2024-05","value":859.0},{"date":"2024-06","value":874.0},{"date":"2024-07","value":896.0},{"date":"2024-08","value":933.0},{"date":"2024-09","value":983.0},{"date":"2024-10","value":1077.0},{"date":"2024-11","value":1169.0},{"date":"2024-12","value":1190.0},{"date":"2025-01","value":1070.0},{"date":"2025-02","value":1067.0},{"date":"2025-03","value":1068.0},{"date":"2025-04","value":994.0},{"date":"2025-05","value":908.0},{"date":"2025-06","value":935.0},{"date":"2025-07","value":976.0},{"date":"2025-08","value":1026.0},{"date":"2025-09","value":1037.0},{"date":"2025-10","value":1038.0},{"date":"2025-11","value":983.0},{"date":"2025-12","value":980.0},{"date":"2026-01","value":1005.0},{"date":"2026-02","value":1039.0},{"date":"2026-03","value":1109.0},{"date":"2026-04","value":1146.0},{"date":"2026-05","value":1136.0},{"date":"2026-06","value":1104.0},{"date":"2026-07","value":1101.0},{"date":"2026-08","value":1117.0}]}]};
+
+
+    function commodityData() {
+      return {...COMMODITY_SNAPSHOT, data:COMMODITY_SNAPSHOT.series.flatMap(s=>s.points)};
+    }
+    function monthlyChange(points) {
+      const last=points.at(-1),previous=points.at(-2);
+      if(!last||!previous||!validNumber(last.value)||!validNumber(previous.value)||Number(previous.value)===0)return null;
+      const month=d=>Number(d.slice(0,4))*12+Number(d.slice(5,7));
+      if(month(last.date)-month(previous.date)!==1)return null;
+      return (last.value/previous.value-1)*100;
+    }
+    function commodityBoardRows() {
+      return COMMODITY_SNAPSHOT.series.map(series=>{
+        const last=series.points.at(-1),change=monthlyChange(series.points);
+        return [series.name,numberVN(last?.value)+' '+series.unit,change===null?'N/A':(change>0?'+':'')+numberVN(change)+'% so với tháng trước',change===null?'neutral':change>=0?'up':'down',{
+          status:'archive',source:COMMODITY_SNAPSHOT.source,observedPeriod:last?.date,sourceUpdatedAt:COMMODITY_SNAPSHOT.sourceUpdatedAt,fetchedAt:COMMODITY_SNAPSHOT.fetchedAt,unit:series.unit,isDemo:false
+        }];
+      });
+    }
+    function commoditySeries(ids) {
+      return ids.map(id=>COMMODITY_SNAPSHOT.series.find(s=>s.id===id)).filter(Boolean);
+    }
+    function commodityChart(title,ids,rebased=false) {
+      const series=commoditySeries(ids);
+      if(!series.length)return '';
+      const commonDates=series[0].points.filter(p=>validNumber(p.value)&&Number(p.value)!==0&&series.every(s=>s.points.some(q=>q.date===p.date&&validNumber(q.value)&&Number(q.value)!==0))).map(p=>p.date);
+      if(rebased&&!commonDates.length)return '<div class="evidence-gap">Không có kỳ gốc chung hợp lệ.</div>';
+      const base=commonDates[0];
+      const plots=series.map(s=>({name:s.name,points:s.points.filter(p=>!rebased||p.date>=base).map(p=>({date:p.date,value:validNumber(p.value)?rebased?100*p.value/s.points.find(q=>q.date===base).value:p.value:null}))}));
+      const unit=rebased?'Chỉ số ('+base+' = 100)':series[0].unit;
+      const source={...commodityData(),data:plots.flatMap(s=>s.points)};
+      return evidenceChart(title,plots,unit,source,'World Bank · bình quân tháng')+(rebased?'<p class="evidence-note">Quy đổi mỗi chuỗi về 100 tại cùng tháng gốc, không phải giá tuyệt đối. Giá gốc và đơn vị nằm trong Research.</p>':'');
+    }
+    function commodityCoverageNote() {
+      return '<p class="evidence-note">Bản công bố '+escapeHTML(COMMODITY_SNAPSHOT.sourceUpdatedAt)+' · '+COMMODITY_SNAPSHOT.series.length+' chuỗi · '+escapeHTML(COMMODITY_SNAPSHOT.series[0].points[0].date)+' → '+escapeHTML(COMMODITY_SNAPSHOT.series[0].points.at(-1).date)+'. Dữ liệu thật lưu kèm HTML; nút Làm mới không tải lại bộ hàng hóa này. Không phải giá giao ngay, giá SJC hay giá hợp đồng tương lai.</p>';
+    }
+    function renderCommodities() {
+      $('commodityContent').innerHTML=commodityCoverageNote()+'<div class="evidence-grid">'+
+        commodityChart('Vàng · giá bình quân tháng',['Gold'])+
+        commodityChart('Dầu thô · Brent và WTI',['Crude oil, Brent','Crude oil, WTI'])+
+        commodityChart('Kim loại công nghiệp · đồng và nhôm',['Copper','Aluminum'])+
+        commodityChart('Cà phê · Robusta và Arabica',['Coffee, Robusta','Coffee, Arabica'])+
+        commodityChart('Gạo Việt Nam 5% tấm',['Rice, Viet Namese 5%'])+
+        commodityChart('Khí tự nhiên · Mỹ và châu Âu',['Natural gas, US','Natural gas, Europe'])+
+        '</div><details><summary>Toàn bộ '+COMMODITY_SNAPSHOT.series.length+' chuỗi, đơn vị và số liệu gốc</summary><div class="evidence-grid">'+
+        COMMODITY_SNAPSHOT.series.filter(s=>!['Gold','Crude oil, Brent','Crude oil, WTI','Copper','Aluminum','Coffee, Robusta','Coffee, Arabica','Rice, Viet Namese 5%','Natural gas, US','Natural gas, Europe'].includes(s.id)).map(s=>commodityChart(s.name,[s.id])).join('')+
+        '</div></details><p class="evidence-source">Nguồn: World Bank, Pink Sheet. Đơn vị giữ nguyên bản gốc: bbl = thùng dầu; mt = tấn hệ mét; troy oz = ounce troy; mmbtu = triệu BTU; dmtu = đơn vị tấn khô. Không tự đổi quặng sắt sang USD/tấn.</p><details><summary>Truy xuất bản dữ liệu</summary><p class="evidence-source">Worksheet: '+escapeHTML(COMMODITY_SNAPSHOT.sheet)+' · hàng '+COMMODITY_SNAPSHOT.rowRange.join('–')+' · SHA-256: '+COMMODITY_SNAPSHOT.sha256+'</p></details>';
+    }
+
+    const DataProvider = {
+      async get(resource) {
+        if(state.forceError)throw new Error('FORCED_ERROR');
+        if(state.providerMode==='public') {
+          if(resource==='panorama')return publicPanorama();
+          if(resource==='commodities')return commodityData();
+          if(resource==='assetBoard')return publicAssetBoard();
+          if(resource==='cryptoHistory') {
+            const values=await Promise.all(['BTCUSDT','ETHUSDT'].map(symbol=>publicSource('history:'+symbol,'https://data-api.binance.vision/api/v3/klines?symbol='+symbol+'&interval=1d&limit=90',raw=>{
+              if(!Array.isArray(raw))throw Error('Sai cấu trúc lịch sử');
+              const rows=raw.filter(r=>Array.isArray(r)&&validNumber(r[0])&&validNumber(r[4])&&Number(r[4])>0&&validNumber(r[6])&&Number(r[6])<Date.now());
+              if(!rows.length)throw Error('Không có nến đã đóng');
+              return rows.map(r=>({date:new Date(Number(r[0])).toISOString().slice(0,10),value:Number(r[4])}));
+            },3600000)));
+            return values;
+          }
+          return null;
+        }
+        if(state.providerMode==='demo') {
+          if(['news','informationStream','globalNews','macroNews','vietnamNews','marketNews','companyNews'].includes(resource))return getNewsFeed(resource);
+          return DEMO[resource] || null;
+        }
+        const endpoint=state.providerConfig?.endpoint;
+        if(!safeURL(endpoint))throw Error('Cần endpoint http/https hợp lệ');
+        const raw=await fetchJSON(endpoint.replace(/\/+$/,'')+'/api/'+encodeURIComponent(resource));
+        if(raw?.isDemo===true||raw?.meta?.isDemo===true||raw?.meta?.status==='demo')throw Error('Nguồn trả về dữ liệu demo');
+        const data=raw?.data ?? raw?.[resource] ?? raw;
+        const containsDemo=(v)=>v&&typeof v==='object'&&(v.isDemo===true||Object.values(v).some(containsDemo));
+        if(containsDemo(data))throw Error('Nguồn chứa dữ liệu demo');
+        return data;
+      }
+    };
+
+
+    const resizeCanvas = (canvas) => {
+      const width = canvas.clientWidth || 1;
+      const ratio = window.devicePixelRatio || 1;
+      const targetWidth = width * ratio;
+      if (cache.widthByCanvas.get(canvas) !== targetWidth) {
+        canvas.width = targetWidth;
+        cache.widthByCanvas.set(canvas, targetWidth);
+      }
+      return { width, ratio };
+    };
+
+    function debounce(fn, waitMs = 220) {
+      let timer = 0;
+      return function () {
+        const ctx = this;
+        const args = arguments;
+        clearTimeout(timer);
+        timer = window.setTimeout(() => fn.apply(ctx, args), waitMs);
+      };
+    }
+
+    function asMoney(v) {
+      if (v == null || v === '') return '-';
+      if (typeof v === 'number') return cache.formatter.money.format(v);
+      return String(v);
+    }
+
+    function applyCompactMode() {
+      document.body.classList.toggle('compact-mode', state.compactMode);
+      const btn = $('toggleCompact');
+      const modeLabel = document.querySelector('.compact-note');
+      if (!btn) return;
+      if (modeLabel) {
+        modeLabel.textContent = state.compactMode ? 'Chế độ: Tập trung' : 'Chế độ: Đầy đủ';
+      }
+      if (state.compactMode) {
+        btn.textContent = 'Hiện module phụ';
+        btn.setAttribute('data-state', 'off');
+      } else {
+        btn.textContent = 'Ẩn module phụ';
+        btn.setAttribute('data-state', 'on');
+      }
+      btn.setAttribute('aria-label', 'Đổi chế độ hiển thị khối thông tin phụ');
+      btn.setAttribute('aria-pressed', String(state.compactMode));
+    }
+
+    function setState(cardId,nextState) {
+      const card=$(cardId);if(!card)return;card.dataset.state=nextState;
+      const notice=card.querySelector(':scope > .module-status');
+      if(notice){notice.textContent={loading:'Đang tải từ nguồn dữ liệu…',empty:state.providerMode==='public'?'Chưa có dữ liệu hoặc chưa kết nối nguồn cho module này. Không sử dụng số liệu mô phỏng.':'Không có dữ liệu phù hợp.',error:'Nguồn lỗi hoặc dữ liệu không hợp lệ. Các module khác vẫn hoạt động.'}[nextState]||'';
+        if(nextState==='error'){const btn=document.createElement('button');btn.textContent='Thử lại';btn.className='ghost';btn.onclick=()=>loadById(cardId);notice.append(' ',btn);}}
+      card.setAttribute('aria-busy',String(nextState==='loading'));
+    }
+
+    function withDelay(ms = 180) {
+      return new Promise((resolve) => window.setTimeout(resolve, ms));
+    }
+
+
+    async function loadCard(cardId,resource,renderFn) {
+      const generation=state.generation,card=$(cardId),serial=(card?.loadSerial||0)+1;
+      if(card)card.loadSerial=serial;
+      setState(cardId,'loading');
+      try {
+        const data=await DataProvider.get(resource);
+        if(generation!==state.generation||card?.loadSerial!==serial)return;
+        state.resourceData[resource]=data;
+        if(data==null||(Array.isArray(data)&&data.length===0)){setState(cardId,'empty');return;}
+        // Legacy renderers interpolate HTML. Escape provider strings at that boundary only.
+        const clean=(v)=>typeof v==='string'?escapeHTML(v):Array.isArray(v)?v.map(clean):v&&typeof v==='object'?Object.fromEntries(Object.entries(v).map(([k,x])=>[k,clean(x)])):v;
+        renderFn(['news','panorama','assetBoard','cryptoHistory','commodities'].includes(resource)?data:clean(data));
+        setState(cardId,'ready');
+        if(resource==='news')applyStreamFilters();
+        if(resource==='panorama'&&Object.values(data).every(x=>x.status==='error'))setState(cardId,'error');
+      }catch(error){if(generation===state.generation&&card?.loadSerial===serial){state.resourceData[resource]=null;setState(cardId,'error');}}
+    }
+
+
+    function renderMetricGrid(container, items) {
+      container.innerHTML = items.map((item) => `
+        <div class="metric">
+          <div class="metric-label">${item.label}</div>
+          <div class="metric-value ${item.dir === 'up' ? 'up' : item.dir === 'down' ? 'down' : ''}">${item.value}</div>
+          <div class="metric-delta ${item.dir === 'up' ? 'up' : item.dir === 'down' ? 'down' : ''}">${item.delta || ''}</div>
+          <div class="muted-row">${item.note || ''}</div>
+        </div>
+      `).join('');
+    }
+
+
+    function renderAssetBoard(groups) {
+      dom.assetBoard.innerHTML=(groups||[]).map(g=>'<section class="asset-group"><h3>'+escapeHTML(g.title)+'</h3>'+g.rows.map(([name,price,change,direction,meta])=>'<div class="asset-row"><strong>'+escapeHTML(name)+'</strong><span class="asset-price">'+escapeHTML(price)+'</span><span class="asset-change '+(['up','down'].includes(direction)?direction:'')+'">'+escapeHTML(change)+'</span>'+(meta?'<small>'+escapeHTML(labels[meta.status]||meta.status)+' · Kỳ quan sát: '+escapeHTML(meta.observedPeriod|| (meta.observedAt?dateVN(meta.observedAt):'N/A'))+(meta.fetchedAt?' · Tải: '+escapeHTML(dateVN(meta.fetchedAt)):'')+(safeURL(meta.source)?' · <a target="_blank" rel="noopener noreferrer" href="'+escapeHTML(safeURL(meta.source))+'">Nguồn</a>':'')+'</small>':'')+'</div>').join('')+'</section>').join('');
+      dom.assetBoardStatus.textContent=state.providerMode==='demo'?'DEMO · Toàn bộ giá là mô phỏng':'Crypto: USDT, thay đổi 24 giờ. FX: tỷ giá tham chiếu. Hàng hóa: bình quân tháng, bản công bố lưu kèm, không tự cập nhật. N/A: chưa có connector, không có nghĩa là không tồn tại nguồn miễn phí.';
+    }
+
+
+    function renderWorldPulse(data) {
+      dom.pulseScore.textContent = data.score;
+      dom.pulseTone.textContent = data.tone;
+      dom.pulseReadout.textContent = data.readout;
+      const briefingLabels = ['What changed', 'Why it matters', 'What to watch next'];
+      dom.pulseEvents.innerHTML = data.events.map((event, index) => `<article class="pulse-event"><span class="pulse-tag">${briefingLabels[index] || event.tag}</span><strong>${event.title}</strong><p>${event.text}</p><div class="source-line" style="margin-top:10px"><span>${event.area}</span><span class="source-badge">${event.tag}</span></div></article>`).join('');
+    }
+
+    function renderImpactMap(steps) {
+      dom.impactChain.innerHTML = steps.map(([label, value]) => `<div class="impact-step"><small>${label}</small><strong>${value}</strong></div>`).join('');
+    }
+
+    function renderMacroRegime(data) { renderMetricGrid(dom.macroRegimeCards, data); }
+    function renderVietnamLens(data) {
+      renderMetricGrid(dom.vietnamLensCards, data);
+      if (state.providerMode === 'public') {
+        const sourceLine = document.querySelector('#vietnam-lens .source-line');
+        const time = state.publicVietnamUpdatedAt ? new Date(state.publicVietnamUpdatedAt).toLocaleTimeString('vi-VN') : 'đang tải';
+        if (sourceLine) sourceLine.innerHTML = `<span class="source-badge">Public macro data</span><span>USD/VND: Frankfurter daily reference · GDP/CPI/FDI: World Bank annual · cập nhật ${time}</span>`;
+      }
+    }
+
+    function renderGlobalOverview(data) {
+      renderMetricGrid(dom.globalCards, data);
+    }
+
+    function renderBreadth(data) {
+      renderMetricGrid(dom.breadthCards, data);
+    }
+
+    function renderWatchlist(data) {
+      const filtered = data.filter(row => {
+        const [sym] = row;
+        return !state.searchFilter || sym.toLowerCase().includes(state.searchFilter.toLowerCase());
+      });
+      dom.watchlistTBody.innerHTML = filtered.map(([sym, price, diff, pct, vol, cap, pe, beta]) => {
+        const dir = pct > 0 ? 'up' : (pct < 0 ? 'down' : 'muted-row');
+        return `<tr>
+          <td><strong>${sym}</strong></td>
+          <td>${asMoney(price)}</td>
+          <td class="${dir}">${asMoney(diff)}</td>
+          <td class="${dir}">${pct.toFixed(2)}%</td>
+          <td>${vol}</td>
+          <td>${cap}</td>
+          <td>${pe}</td>
+          <td>${beta}</td>
+        </tr>`;
+      }).join('');
+    }
+
+    function renderIndicators(data) {
+      renderMetricGrid(dom.indicatorCards, data);
+    }
+
+    function fillTickerBar(items) {
+      dom.tickerBar.innerHTML = items.map((item) => `<div>▸ ${item}</div>`).join('') + items.map((item) => `<div>▸ ${item}</div>`).join('');
+    }
+
+    function renderOrderBook(data) {
+      dom.bidsBody.innerHTML = data.bids.map((row) => `<tr><td>${asMoney(row.price)}</td><td>${row.qty.toFixed(2)}M</td><td>${row.depth}</td></tr>`).join('');
+      dom.asksBody.innerHTML = data.asks.map((row) => `<tr><td>${asMoney(row.price)}</td><td>${row.qty.toFixed(2)}M</td><td>${row.depth}</td></tr>`).join('');
+    }
+
+    function renderSectors(data) {
+      dom.sectorHeat.innerHTML = data.map((item) => {
+        const cls = item.val > 0 ? 'positive-bg' : (item.val < 0 ? 'negative-bg' : '');
+        return `<div class="sector-card ${cls}">${item.name}<div class="heat-value">${item.val > 0 ? '+' : ''}${item.val.toFixed(2)}%</div></div>`;
+      }).join('');
+    }
+
+    function renderMovers(data) {
+      dom.moversUp.innerHTML = data.up.map(([s, p]) => `<tr><td>${s}</td><td class="up">+${p}%</td></tr>`).join('');
+      dom.moversDown.innerHTML = data.down.map(([s, p]) => `<tr><td>${s}</td><td class="down">${p}%</td></tr>`).join('');
+      dom.moversVol.innerHTML = data.volume.map(([s, p]) => `<tr><td>${s}</td><td>${p}</td></tr>`).join('');
+    }
+
+    function renderFlow(data) {
+      renderMetricGrid(dom.flowCards, data.rows);
+    }
+
+    function renderValuation(data) {
+      renderMetricGrid(dom.valuationGrid, data.map(([label, value]) => ({ label, value, delta:'--', note:'' })));
+    }
+
+    function renderFinancials(rows) {
+      dom.financialBody.innerHTML = rows.map(([name, y24, y25, yoy]) => {
+        const txt = `${yoy}`;
+        return `<tr><td>${name}</td><td>${y24}</td><td>${y25}</td><td class="${txt.includes('-') ? 'down' : 'up'}">${txt}</td></tr>`;
+      }).join('');
+    }
+
+    function renderCalendar(data) {
+      dom.earningsBody.innerHTML = data.earningsCalendar.map(([d, s, t, imp]) => `<tr><td>${d}</td><td>${s}</td><td>${t}</td><td>${imp}</td></tr>`).join('');
+      dom.economicBody.innerHTML = data.economicCalendar.map(([d, s, p, a]) => `<tr><td>${d}</td><td>${s}</td><td>${p}</td><td>${a}</td></tr>`).join('');
+      renderMetricGrid(dom.macroCards, data.macro || []);
+    }
+
+    function renderCrossAssets(data) {
+      dom.commoditiesBody.innerHTML = (data.commodities || []).map(([s, v, p]) => {
+        const cls = p.includes('-') ? 'down' : (p.includes('+') ? 'up' : 'muted-row');
+        return `<tr><td>${s}</td><td>${asMoney(v)}</td><td class="${cls}">${p}</td></tr>`;
+      }).join('');
+
+      dom.fxBody.innerHTML = (data.fx || []).map(([s, v, p]) => {
+        const cls = p.includes('-') ? 'down' : (p.includes('+') ? 'up' : 'muted-row');
+        return `<tr><td>${s}</td><td>${asMoney(v)}</td><td class="${cls}">${p}</td></tr>`;
+      }).join('');
+
+      dom.cryptoBody.innerHTML = (data.crypto || []).map(([s, v, p]) => {
+        const cls = p.includes('-') ? 'down' : (p.includes('+') ? 'up' : 'muted-row');
+        return `<tr><td>${s}</td><td>${asMoney(v)}</td><td class="${cls}">${p}</td></tr>`;
+      }).join('');
+    }
+
+    function renderPortfolio(data) {
+      dom.portfolioBody.innerHTML = data.rows.map(([sym, qty, cost, mark, pnl]) => {
+        const className = pnl.includes('-') ? 'down' : 'up';
+        return `<tr><td>${sym}</td><td>${qty}</td><td>${asMoney(cost)}</td><td>${asMoney(mark)}</td><td class="${className}">${pnl}</td></tr>`;
+      }).join('');
+      const mini = state.providerMode === 'demo' ? [
+        { label:'Total P/L', value:'+1.18%', delta:'today +0.42%', dir:'up' },
+        { label:'Best sector', value:'Auto', delta:'+2.4%', dir:'up' },
+        { label:'Worst sector', value:'Real Estate', delta:'-1.9%', dir:'down' },
+        { label:'NAV', value:'1.98 tỷ', delta:'unrealized 38.4M', dir:'up' }
+      ] : [];
+      renderMetricGrid(dom.pnlMini, mini);
+    }
+
+    function renderRisk(items) {
+      renderMetricGrid(dom.riskCards, items);
+    }
+
+    function renderAlerts(items) {
+      dom.alertsList.innerHTML = items.map((a) => {
+        const type = (a.type || a.level || 'info').toUpperCase();
+        const when = a.when || 'demo';
+        const severity = a.severity || a.level || 'info';
+        return `<div class="news-item"><strong>${type}</strong> (${when}) ${a.text}<span class="news-meta">Mức: ${severity}</span></div>`;
+      }).join('');
+    }
+
+    function renderScreener(rows) {
+      if (!rows || rows.length === 0) {
+        dom.screenerResult.innerHTML = '<p class="muted-row">Không có mã thỏa điều kiện.</p>';
+        return;
+      }
+      dom.screenerResult.innerHTML = `<table class="list-table"><thead><tr><th>Mã</th><th>PE</th><th>ROE</th><th>Tăng trưởng</th><th>Ngành</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}%</td><td>${r[3]}%</td><td>${r[4] || 'N/A'}</td></tr>`).join('')}</tbody></table>`;
+    }
+
+    function renderComparison(input) {
+      const arr = input.split(',').map((x) => x.trim()).filter(Boolean);
+      if (arr.length === 0) {
+        dom.comparisonResult.innerHTML = '<p class="muted-row">Nhập ít nhất 1 mã.</p>';
+        return;
+      }
+      const rows = arr.map((sym) => {
+        const hit = (state.resourceData.watchlist || []).find((r) => r[0] === sym);
+        const price = hit ? hit[1] : null;
+        const pnl = hit ? hit[2] : null;
+        const pe = hit ? hit[6] : '-';
+        return [escapeHTML(sym), price, pnl === null ? 'N/A' : pnl > 0 ? 'Tăng' : (pnl < 0 ? 'Giảm' : 'Ổn định'), pe];
+      });
+      dom.comparisonResult.innerHTML = `<table class="list-table"><thead><tr><th>Mã</th><th>Giá</th><th>Động lực</th><th>PE</th></tr></thead><tbody>${rows.map((r) => `<tr><td>${r[0]}</td><td>${asMoney(r[1])}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table>`;
+    }
+
+    function renderSummary(data) {
+      const current = data || { headline: '', marketTone: 'không xác định', sectorBias: [], riskAlerts: [] };
+      const tone = current.marketTone ? `Xu hướng hiện tại: ${current.marketTone}.` : '';
+      dom.summaryBox.textContent = `${current.headline || 'Thị trường đang duy trì xu hướng theo dõi.'} ${tone}`;
+      dom.summarySignals.innerHTML = `
+        <span class="mini-badge ${current.marketTone.includes('tăng') ? 'up' : 'down'}">Bias: ${current.marketTone}</span>
+        <span class="mini-badge">Sector tốt: ${current.sectorBias.join(', ') || 'Chưa phân loại'}</span>
+        <span class="mini-badge">Rủi ro: ${current.riskAlerts[0] || 'Theo dõi biến động vĩ mô'}</span>
+      `;
+    }
+
+
+    function renderNews(newsList) {
+      const items=state.activeWorkspace==='today'?newsList.slice(0,5):newsList;
+      dom.newsFeed.innerHTML=items.map(item=>{
+        const title=escapeHTML(item.title),url=safeURL(item.url);
+        return '<article class="stream-item"><div class="stream-time">'+escapeHTML(dateVN(item.publishedAt))+'<br>'+escapeHTML(item.source)+'</div><div><h3>'+(url?'<a href="'+escapeHTML(url)+'" target="_blank" rel="noopener noreferrer">'+title+'</a>':title+' <small>(chưa có link gốc)</small>')+'</h3><p>'+escapeHTML(item.summary)+'</p>'+(item.whyItMatters?'<p><strong>Interpretation · Vì sao đáng chú ý:</strong> '+escapeHTML(item.whyItMatters)+'</p>':'')+'<div class="news-meta">'+[item.kind,item.category,item.region,item.tickers.join(', ')||'N/A','Sentiment: '+item.sentiment,item.isDemo?'DEMO':'Độ tin cậy: '+item.confidence].map(x=>'<span>'+escapeHTML(x)+'</span>').join('')+'</div></div><span class="impact-score">'+escapeHTML(item.impact)+'</span></article>';
+      }).join('');
+    }
+    function acceptNews(items) {
+      state.newsItems=dedupeNews((items||[]).map(normalizeNewsItem)).filter(x=>state.providerMode==='demo'||!x.isDemo);
+      const select=$('streamSource'),current=select.value;
+      select.replaceChildren(new Option('Mọi nguồn','all'),...[...new Set(state.newsItems.map(x=>x.source))].sort().map(x=>new Option(x,x)));
+      if([...select.options].some(x=>x.value===current))select.value=current;
+      state.newsFetchedAt=new Date().toISOString();applyStreamFilters();
+    }
+    function applyStreamFilters() {
+      if($('news').dataset.state==='loading'||$('news').dataset.state==='error')return;
+      const val=id=>$(id)?.value||'all',windowValue=val('streamWindow'),days={'24h':1,'7d':7,'30d':30}[windowValue];
+      const cutoff=days?Date.now()-days*86400000:null;
+      const filtered=state.newsItems.filter(item=>{
+        const time=item.publishedAt?Date.parse(item.publishedAt):null;
+        return (cutoff===null||(time!==null&&time>=cutoff&&time<=Date.now()))&&[['streamCategory','category'],['streamRegion','region'],['streamSource','source'],['streamImpact','impact']].every(([control,key])=>val(control)==='all'||val(control)===item[key]);
+      });
+      renderNews(filtered);
+      $('streamStatus').textContent=(state.providerMode==='demo'?'DEMO · ':state.newsFetchedAt?'Tải: '+dateVN(state.newsFetchedAt)+' · ':'Chưa kết nối nguồn tin · ')+filtered.length+' tin'+(state.activeWorkspace==='today'?' · hiển thị tối đa 5':'')+' · Thời gian GMT+7';
+      setState('news',filtered.length?'ready':'empty');
+    }
+
+
+    function renderCompany(data) {
+      dom.profile.innerHTML = `
+        <div class="metric"><div class="metric-label">Tên</div><div class="metric-value metric-title">${data.name}</div></div>
+        <div class="metric mt-8"><div class="metric-label">Ngành</div><div class="metric-value metric-subtitle">${data.sector}</div></div>
+        <div class="metrics-grid mt-8">
+          <div class="metric"><div class="metric-label">Market Cap</div><div class="metric-value">${data.marketCap}</div></div>
+          <div class="metric"><div class="metric-label">Free Float</div><div class="metric-value">${data.float}</div></div>
+          <div class="metric"><div class="metric-label">Vốn lưu hành</div><div class="metric-value">${data.shares}</div></div>
+          <div class="metric"><div class="metric-label">IPO</div><div class="metric-value">${data.ipo}</div></div>
+        </div>
+        <p class="muted-row">CEO: ${data.ceo}</p>
+        <p>${data.description}</p>
+      `;
+      dom.actions.innerHTML = (data.corporateActions || []).map((a) => `<div class="news-item"><div><strong>${a.date}</strong> - ${a.type}</div><p>${a.detail}</p></div>`).join('');
+    }
+
+    function drawCandles(canvas, data) {
+      const ctx = canvas.getContext('2d');
+      if (!ctx || !Array.isArray(data) || data.length === 0) return;
+      const { width, ratio } = resizeCanvas(canvas);
+      const height = 220;
+      const padding = { left: 40, right: 10, top: 10, bottom: 24 };
+      canvas.height = height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = chartColors.surface;
+      ctx.fillRect(0, 0, width, height);
+
+      const maxH = Math.max(...data.map((d) => d.high));
+      const minL = Math.min(...data.map((d) => d.low));
+      const span = maxH - minL || 1;
+      const chartH = height - padding.top - padding.bottom;
+      const chartW = width - padding.left - padding.right;
+      const step = chartW / data.length;
+      const barW = Math.max(4, step * 0.45);
+
+      ctx.strokeStyle = chartColors.axis;
+      ctx.beginPath();
+      ctx.moveTo(padding.left, padding.top);
+      ctx.lineTo(padding.left, height - padding.bottom);
+      ctx.lineTo(width - padding.right, height - padding.bottom);
+      ctx.stroke();
+
+      for (let i = 0; i <= 4; i++) {
+        const y = padding.top + i * (chartH / 4);
+        ctx.beginPath();
+        ctx.strokeStyle = chartColors.grid;
+        ctx.moveTo(padding.left, y);
+        ctx.lineTo(width - padding.right, y);
+        ctx.stroke();
+      }
+
+      function y(v) {
+        return padding.top + ((maxH - v) / span) * chartH;
+      }
+
+      data.forEach((d, i) => {
+        const x = padding.left + i * step + step * 0.1;
+        const openY = y(d.open);
+        const closeY = y(d.close);
+        const highY = y(d.high);
+        const lowY = y(d.low);
+
+        const bull = d.close >= d.open;
+        ctx.strokeStyle = bull ? chartColors.up : chartColors.down;
+        ctx.beginPath();
+        ctx.moveTo(x + barW / 2, highY);
+        ctx.lineTo(x + barW / 2, lowY);
+        ctx.stroke();
+
+        const top = Math.min(openY, closeY);
+        const bottom = Math.max(openY, closeY);
+        ctx.fillStyle = bull ? chartColors.upFill : chartColors.downFill;
+        ctx.strokeStyle = bull ? chartColors.up : chartColors.down;
+        ctx.fillRect(x, top, barW, Math.max(1, bottom - top));
+        ctx.strokeRect(x, top, barW, Math.max(1, bottom - top));
+      });
+
+      data.forEach((d, i) => {
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = chartFont;
+        ctx.fillText(d.d, padding.left + i * step + 1, height - 8);
+      });
+    }
+
+    function drawVolume(canvas, data) {
+      const ctx = canvas.getContext('2d');
+      if (!ctx || !Array.isArray(data) || data.length === 0) return;
+      const { width, ratio } = resizeCanvas(canvas);
+      const height = 110;
+      canvas.height = height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.fillStyle = chartColors.surface;
+      ctx.fillRect(0, 0, width, height);
+
+      const vols = data.map((d) => d.vol);
+      const max = Math.max(...vols) || 1;
+      const w = width - 36;
+      const h = height - 22;
+      const step = w / data.length;
+
+      vols.forEach((v, i) => {
+        const bh = (v / max) * h;
+        const x = 20 + i * step;
+        ctx.fillStyle = i % 2 ? '#7f8a93' : '#a1a1aa';
+        ctx.fillRect(x + 1, height - 12 - bh, step - 4, bh);
+      });
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = chartFont;
+      data.forEach((d, i) => {
+        if (i % 2 === 0) {
+          ctx.fillText(d.d, 26 + i * step, height - 2);
+        }
+      });
+    }
+
+    function drawPnl(canvas, rows) {
+      const ctx = canvas.getContext('2d');
+      if (!ctx || !Array.isArray(rows) || rows.length === 0) return;
+      const { width, ratio } = resizeCanvas(canvas);
+      const height = 140;
+      canvas.height = height * ratio;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.fillStyle = chartColors.surface;
+      ctx.fillRect(0, 0, width, height);
+
+      const vals = rows.map((r) => r[1]);
+      const max = Math.max(...vals);
+      const min = Math.min(...vals);
+      const span = Math.max(max - min, 0.001);
+      const pad = { l: 28, r: 10, t: 14, b: 22 };
+      const h = height - pad.t - pad.b;
+      const w = width - pad.l - pad.r;
+      const step = w / (rows.length - 1);
+
+      function y(v) { return pad.t + ((max - v) / span) * h; }
+
+      ctx.strokeStyle = chartColors.grid;
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t);
+      ctx.lineTo(pad.l, height - pad.b);
+      ctx.lineTo(width - pad.r, height - pad.b);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.strokeStyle = chartColors.marker;
+      ctx.lineWidth = 2;
+      rows.forEach(([, v], i) => {
+        const x = pad.l + i * step;
+        const yy = y(v);
+        if (i === 0) {
+          ctx.moveTo(x, yy);
+        } else {
+          ctx.lineTo(x, yy);
+        }
+      });
+      ctx.stroke();
+
+      rows.forEach((p, i) => {
+        const x = pad.l + i * step;
+        const yy = y(p[1]);
+        const c = p[1] >= 0 ? chartColors.up : chartColors.down;
+        ctx.fillStyle = c;
+        ctx.beginPath();
+        ctx.arc(x, yy, 2.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      vals.forEach((_, i) => {
+        if (i % 2 === 0) {
+          ctx.fillStyle = '#94a3b8';
+          ctx.font = chartFont;
+          ctx.fillText(rows[i][0], pad.l + i * step - 3, height - 6);
+        }
+      });
+    }
+
+    let activeChartData = null;
+    function renderChart() {
+      if (state.providerMode === 'public' || !activeChartData) { setState('charts', 'empty'); return; }
+      const tf = document.getElementById('chartTimeframe').value;
+      const chartData = (activeChartData && activeChartData.oneD && activeChartData.oneW && activeChartData.oneM && activeChartData.oneY) ? activeChartData : {};
+      const source = {
+        '1D': chartData.oneD,
+        '1W': chartData.oneW,
+        '1M': chartData.oneM,
+        '1Y': chartData.oneY
+      }[tf] || chartData.oneW;
+      drawCandles(document.getElementById('candlestickCanvas'), source);
+      drawVolume(document.getElementById('volumeCanvas'), source);
+    }
+
+    function addSymbol(symbol) {
+      if (state.providerMode !== 'demo') { setState('watchlist','empty'); return; }
+      const s = symbol.trim().toUpperCase();
+      if (!s) return;
+      if (!state.watchlistSymbols.includes(s)) {
+        state.watchlistSymbols.unshift(s);
+        DEMO.watchlist.unshift([s, 0, 0, 0, '0', '0', 0, 0]);
+      }
+      renderWatchlist(DEMO.watchlist);
+      state.searchFilter = '';
+      $('search').value = '';
+    }
+
+    function addAlert(text) {
+      if (state.providerMode !== 'demo') { setState('alerts','empty'); return; }
+      if (!text || !text.trim()) return;
+      state.alerts.unshift({ when:'manual', type:'custom', text: text.trim(), severity:'info' });
+      renderAlerts(state.alerts);
+    }
+
+
+    async function refreshAll() {
+      // Invalidate all workspace flags, refresh only the visible workspace.
+      loadedWorkspaces.clear();state.sourceCache.forEach((entry,key)=>state.sourceCache.set(key,{...entry,fetchedAt:entry.fetchedAt,expired:true}));
+      state.forceRefresh=true;
+      try {await loadWorkspace(state.activeWorkspace||'today');}finally{state.forceRefresh=false;}
+    }
+
+
+    function runCommand() {
+      const cmd = $('command').value.trim().toLowerCase();
+      if (cmd.startsWith('filter:gainers')) {
+        $('movers').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      if (cmd.startsWith('add_symbol')) {
+        const symbol = cmd.split(' ').pop();
+        if (symbol) addSymbol(symbol);
+        return;
+      }
+      if (cmd.startsWith('timeframe:')) {
+        const tf = cmd.split(':')[1].toUpperCase().trim();
+        const sel = $('chartTimeframe');
+        if ([...sel.options].some((o) => o.value === tf)) {
+          sel.value = tf;
+          renderChart();
+        }
+        return;
+      }
+      if (cmd.startsWith('add_alert:')) {
+        const txt = cmd.replace('add_alert:', '').trim();
+        addAlert(txt);
+      }
+    }
+
+    $('search').addEventListener('input', debounce(() => {
+      state.searchFilter = $('search').value.trim().toUpperCase();
+      renderWatchlist(state.resourceData.watchlist || []);
+      if (!state.searchFilter) return;
+      const firstVisible = dom.watchlistTBody?.querySelector('tr');
+      if (firstVisible) firstVisible.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 160));
+
+    $('command').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') runCommand();
+    });
+
+    $('chartTimeframe').addEventListener('change', renderChart);
+    $('addSymbol').addEventListener('click', () => addSymbol($('new-symbol').value));
+    $('runComparison').addEventListener('click', () => renderComparison($('compareInput').value));
+    $('addAlert').addEventListener('click', () => {
+      const val = $('alertInput').value;
+      addAlert(val);
+      $('alertInput').value = '';
+    });
+    $('runScreener').addEventListener('click', () => {
+      const sec = $('screenerSector').value;
+      const peMax = Number($('screenerPeMax').value || 20);
+      const roeMin = Number($('screenerRoeMin').value || 10);
+      const out = (state.resourceData.screenerResults || [])
+        .filter((row) => (row[1] <= peMax && row[2] >= roeMin));
+      renderScreener(sec === 'All' ? out : out.filter((row) => row[4] === sec));
+    });
+
+    ['streamCategory', 'streamRegion', 'streamSource', 'streamWindow', 'streamImpact'].forEach((id) => $(id)?.addEventListener('change', applyStreamFilters));
+
+    $('refreshCrossAsset').addEventListener('click', () => loadCard('crossAssets', 'crossAssets', renderCrossAssets));
+
+    window.setInterval(()=>{if(!document.hidden&&state.providerMode!=='demo')refreshAll();},PROVIDER_CONFIG.refreshMinutes*60*1000);
+    $('retryAll').addEventListener('click',()=>{state.forceError=false;refreshAll();});
+    $('simulateError').addEventListener('click',()=>{state.forceError=!state.forceError;refreshAll();});
+    $('saveProvider').addEventListener('click',()=>switchProvider($('providerMode').value,$('providerEndpoint').value));
+
+    async function switchProvider(mode,endpoint='') {
+      state.generation++;
+      state.requests.forEach(ctrl=>ctrl.abort());state.requests.clear();state.pending.clear();
+      stopPublicStream();state.cryptoTicks={};state.publicAssetBoard=null;state.cryptoRetry=0;state.lastCryptoEvent=0;
+      state.providerMode=['demo','public','custom'].includes(mode)?mode:'public';state.providerConfig={endpoint:endpoint.trim()};
+      state.resourceData={};state.newsItems=[];state.newsFetchedAt=null;activeChartData=null;loadedWorkspaces.clear();
+      syncModeUI();
+      document.querySelectorAll('.grid > section[id]').forEach(card=>{if(card.id!=='provider')setState(card.id,'empty');});
+      $('streamStatus').textContent='Chưa đồng bộ nguồn tin';$('streamSource').replaceChildren(new Option('Mọi nguồn','all'));
+      await loadWorkspace(state.activeWorkspace||'today');
+    }
+
+
+
+    $('toggleCompact').addEventListener('click', () => {
+      state.compactMode = !state.compactMode;
+      applyCompactMode();
+    });
+
+    const PANORAMA_DATA = {
+      world: [
+        { name: 'Cổ phiếu', values: [96, 97, 98, 97, 99, 101, 100, 102, 103, 102, 104, 106] },
+        { name: 'USD', values: [100, 101, 101, 102, 103, 102, 104, 105, 104, 105, 105, 106] },
+        { name: 'Hàng hóa', values: [104, 103, 102, 101, 100, 102, 101, 99, 100, 99, 98, 100] }
+      ],
+      vietnam: [
+        { name: 'VN-Index', values: [98, 99, 97, 100, 101, 100, 102, 103, 102, 104, 105, 106] },
+        { name: 'VNMidcap', values: [100, 98, 97, 99, 101, 103, 102, 105, 104, 106, 105, 107] },
+        { name: 'Thanh khoản', values: [92, 95, 91, 98, 103, 100, 106, 110, 104, 108, 112, 109] }
+      ]
+    };
+
+    function setupPanoramaCharts() {
+      const pulseGrid = document.getElementById('pulseEvents');
+      if (!document.getElementById('worldPanoramaCanvas')) pulseGrid.insertAdjacentHTML('beforebegin', `<div class="panorama-panel"><div class="panorama-head"><div><h3>Toàn cảnh thị trường thế giới</h3><p>Mỗi chuỗi bắt đầu tại 100 · 12 kỳ quan sát demo</p></div><div class="panorama-legend"><span class="legend-line" style="color:#64D2FF">Cổ phiếu</span><span class="legend-line dashed" style="color:#FFD60A">USD</span><span class="legend-line dotted" style="color:#FF9F0A">Hàng hóa</span></div></div><canvas id="worldPanoramaCanvas" class="panorama-canvas"></canvas><div class="panorama-source">DEMO · So sánh phần trăm thay đổi tương đối từ cùng một mốc 100</div></div>`);
+      const vietnamContent = document.querySelector('#vietnam-lens .card-content');
+      if (!document.getElementById('vietnamPanoramaCanvas')) vietnamContent.insertAdjacentHTML('afterbegin', `<div class="panorama-panel light"><div class="panorama-head"><div><h3>Toàn cảnh thị trường Việt Nam</h3><p>Mỗi chuỗi bắt đầu tại 100 · VN-Index, midcap và thanh khoản</p></div><div class="panorama-legend"><span class="legend-line" style="color:#0071E3">VN-Index</span><span class="legend-line dashed" style="color:#198754">Midcap</span><span class="legend-line dotted" style="color:#D97706">Thanh khoản</span></div></div><canvas id="vietnamPanoramaCanvas" class="panorama-canvas"></canvas><div class="panorama-source">DEMO · So sánh hướng và cường độ, không so sánh giá trị tuyệt đối khác đơn vị</div></div>`);
+    }
+
+    function drawPanorama(canvasId, series, dark = false) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || canvas.clientWidth === 0) return;
+      const ratio = window.devicePixelRatio || 1;
+      const width = canvas.clientWidth;
+      const height = parseFloat(getComputedStyle(canvas).height) || 230;
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.clearRect(0, 0, width, height);
+      const pad = { top: 12, right: 92, bottom: 24, left: 34 };
+      const plotW = width - pad.left - pad.right;
+      const plotH = height - pad.top - pad.bottom;
+      const normalizedSeries = series.map((item) => {
+        const base = item.values[0] || 1;
+        return { ...item, values: item.values.map((value) => (value / base) * 100) };
+      });
+      const values = normalizedSeries.flatMap((item) => item.values);
+      const min = Math.floor(Math.min(...values) - 2);
+      const max = Math.ceil(Math.max(...values) + 2);
+      const x = (index, count) => pad.left + (index / (count - 1)) * plotW;
+      const y = (value) => pad.top + ((max - value) / (max - min)) * plotH;
+      ctx.font = '10px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let i = 0; i < 4; i += 1) {
+        const value = min + ((max - min) / 3) * i;
+        const py = y(value);
+        ctx.strokeStyle = dark ? 'rgba(255,255,255,.11)' : 'rgba(0,0,0,.08)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(pad.left, py); ctx.lineTo(width - pad.right, py); ctx.stroke();
+        ctx.fillStyle = dark ? 'rgba(255,255,255,.48)' : '#86868b';
+        ctx.fillText(String(Math.round(value)), pad.left - 7, py);
+      }
+      ctx.strokeStyle = dark ? 'rgba(255,255,255,.36)' : 'rgba(0,0,0,.28)';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(pad.left, y(100)); ctx.lineTo(width - pad.right, y(100)); ctx.stroke();
+      ctx.setLineDash([]);
+      const palette = dark ? ['#64D2FF', '#FFD60A', '#FF9F0A'] : ['#0071E3', '#198754', '#D97706'];
+      const dashPatterns = [[], [8, 5], [2, 5]];
+      const labelOffsets = dark ? [-5, 7, 0] : [-6, 8, 0];
+      normalizedSeries.forEach((item, seriesIndex) => {
+        ctx.strokeStyle = palette[seriesIndex];
+        ctx.lineWidth = seriesIndex === 0 ? 2.5 : 1.7;
+        ctx.setLineDash(dashPatterns[seriesIndex]);
+        ctx.beginPath();
+        item.values.forEach((value, index) => {
+          const px = x(index, item.values.length);
+          const py = y(value);
+          if (index === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+        const lastIndex = item.values.length - 1;
+        ctx.fillStyle = palette[seriesIndex];
+        ctx.beginPath(); ctx.arc(x(lastIndex, item.values.length), y(item.values[lastIndex]), seriesIndex === 0 ? 3.5 : 2.5, 0, Math.PI * 2); ctx.fill();
+        ctx.setLineDash([]);
+        ctx.font = '600 10px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(item.name, width - pad.right + 9, y(item.values[lastIndex]) + labelOffsets[seriesIndex]);
+      });
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillStyle = dark ? 'rgba(255,255,255,.46)' : '#86868b';
+      ['-12 kỳ', '-8 kỳ', '-4 kỳ', 'Hiện tại'].forEach((label, index) => ctx.fillText(label, pad.left + (index / 3) * plotW, height - 2));
+    }
+
+    function renderPanoramaCharts() {
+      if (state.providerMode !== 'demo') return;
+      drawPanorama('worldPanoramaCanvas', PANORAMA_DATA.world, true);
+      drawPanorama('vietnamPanoramaCanvas', PANORAMA_DATA.vietnam, false);
+    }
+
+    const WORKSPACES = {
+      today: { title: 'Today', subtitle: 'Bối cảnh toàn cầu, tác động Việt Nam và điều cần theo dõi', target: 'world-pulse', ids: ['public-overview', 'world-pulse', 'impact-map', 'macro-regime', 'vietnam-lens', 'summary', 'news'] },
+      market: { title: 'Vietnam Market', subtitle: 'Theo dõi phiên, dòng tiền và diễn biến giá', target: 'global-overview', ids: ['global-overview', 'market-breadth', 'watchlist', 'indicators', 'charts', 'orderbook', 'sectors', 'movers', 'flow'] },
+      research: { title: 'Research', subtitle: 'Dữ liệu sâu, calendar và công cụ so sánh', target: 'asset-board', ids: ['asset-board', 'calendar', 'macro', 'crossAssets', 'valuation', 'financials', 'screener', 'comparison', 'crypto-history', 'commodity-history', 'provider'] },
+      portfolio: { title: 'Portfolio', subtitle: 'Danh mục, rủi ro và các sự kiện doanh nghiệp', target: 'portfolio', ids: ['portfolio', 'risk', 'alerts', 'corp'] }
+    };
+    const loadedWorkspaces = new Set();
+
+    function setupWorkspaces() {
+      const itemWorkspace = {};
+      Object.entries(WORKSPACES).forEach(([workspace, config]) => config.ids.forEach((id) => { itemWorkspace[id] = workspace; }));
+      document.querySelectorAll('.grid > section[id]').forEach((element) => {
+        const workspace = itemWorkspace[element.id];
+        if (workspace) {
+          element.dataset.workspace = workspace;
+          element.classList.add('workspace-item');
+        }
+      });
+      document.querySelectorAll('.logical-section').forEach((element) => { element.hidden = true; });
+      const nav = document.querySelector('.nav');
+      nav.classList.add('workspace-switcher');
+      nav.innerHTML = Object.entries(WORKSPACES).map(([key, config], index) => `<button class="${index === 0 ? 'active' : ''}" data-workspace="${key}" data-target="${config.target}">${config.title}</button>`).join('');
+      const searchWrap = document.querySelector('.search-wrap');
+      searchWrap.insertAdjacentHTML('afterbegin', '<div class="workspace-heading"><h2 id="workspaceTitle">Today</h2><p id="workspaceSubtitle">Bối cảnh toàn cầu, tác động Việt Nam và điều cần theo dõi</p></div>');
+      nav.querySelectorAll('button').forEach((button) => button.addEventListener('click', async () => {
+        await loadWorkspace(button.dataset.workspace);
+      }));
+    }
+
+
+    async function loadWorkspace(key) {
+      if(!WORKSPACES[key])key='today';
+      const workspace=WORKSPACES[key],generation=state.generation;
+      state.activeWorkspace=key;document.body.dataset.workspace=key;
+      $('workspaceTitle').textContent=workspace.title;$('workspaceSubtitle').textContent=workspace.subtitle;
+      document.querySelectorAll('.nav button').forEach(btn=>{btn.classList.toggle('active',btn.dataset.workspace===key);btn.setAttribute('aria-selected',String(btn.dataset.workspace===key));});
+      if(key!=='research'){stopPublicStream();markCryptoStale();}else connectPublicCryptoStream();
+      if(!loadedWorkspaces.has(key)) {
+        const ids=workspace.ids.filter(id=>!(state.providerMode==='public'&&['world-pulse','impact-map','macro-regime','vietnam-lens','summary'].includes(id))&&!(state.providerMode!=='public'&&['public-overview','crypto-history','commodity-history'].includes(id)));
+        await Promise.allSettled(ids.map(loadById));
+        if(generation!==state.generation)return;
+        if(ids.every(id=>$(id)?.dataset.state!=='error'))loadedWorkspaces.add(key);
+      }
+      if(state.activeWorkspace===key){requestAnimationFrame(redrawVisuals);if(key==='today')applyStreamFilters();}
+    }
+
+
+
+    document.querySelectorAll('.nav button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        const el = document.getElementById(target);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelectorAll('.nav button').forEach((x) => x.classList.remove('active'));
+          btn.classList.add('active');
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-retry]').forEach((btn) => {
+      btn.addEventListener('click', (e) => loadById(e.target.getAttribute('data-retry')));
+    });
+
+    function loadById(id) {
+      const map = {
+        'public-overview': ['panorama', renderPublicPanorama],
+        'crypto-history': ['cryptoHistory', renderCryptoHistory],
+        'commodity-history': ['commodities', renderCommodities],
+        'asset-board': ['assetBoard', renderAssetBoard],
+        'world-pulse': ['worldEvents', renderWorldPulse],
+        'impact-map': ['impactMap', renderImpactMap],
+        'macro-regime': ['macroRegime', renderMacroRegime],
+        'vietnam-lens': ['vietnamLens', renderVietnamLens],
+        'global-overview': ['globalCards', renderGlobalOverview],
+        'market-breadth': ['breadth', renderBreadth],
+        'watchlist': ['watchlist', renderWatchlist],
+        'indicators': ['indicators', renderIndicators],
+        'charts': ['chart', data => { activeChartData=data; renderChart(); }],
+        'orderbook': ['orderbook', renderOrderBook],
+        'sectors': ['sectors', renderSectors],
+        'movers': ['movers', renderMovers],
+        'flow': ['flow', renderFlow],
+        'valuation': ['valuation', renderValuation],
+        'financials': ['financials', renderFinancials],
+        'calendar': ['calendar', renderCalendar],
+        'macro': ['macro', renderCalendar],
+        'crossAssets': ['crossAssets', renderCrossAssets],
+        'portfolio': ['portfolio', (data) => {
+          renderPortfolio(data);
+          drawPnl(document.getElementById('pnlCanvas'), data.pnl);
+        }],
+        'risk': ['risk', renderRisk],
+        'alerts': ['alerts', renderAlerts],
+        'screener': ['screenerResults', renderScreener],
+        'comparison': ['watchlist', () => renderComparison($('compareInput').value)],
+        'summary': ['summary', renderSummary],
+        'news': ['news', acceptNews],
+        'corp': ['companyProfile', renderCompany]
+      };
+      const entry = map[id];
+      if (!entry) return;
+      const [resource, renderer] = entry;
+
+      return loadCard(id,resource,renderer);
+    }
+
+    const redrawVisuals=debounce(()=>{
+      if(state.providerMode==='demo'&&state.activeWorkspace==='today')renderPanoramaCharts();
+      if(state.activeWorkspace==='market'&&state.resourceData.chart)renderChart();
+      if(state.activeWorkspace==='portfolio'&&state.resourceData.portfolio?.pnl)drawPnl($('pnlCanvas'),state.resourceData.portfolio.pnl);
+    },120);
+
+
+    window.addEventListener('resize', redrawVisuals);
+
+
+    function syncModeUI() {
+      document.body.dataset.provider=state.providerMode;
+      $('providerMode').value=state.providerMode;
+      const label=state.providerMode==='demo'?'DEMO · dữ liệu mô phỏng':state.providerMode==='public'?'Nguồn miễn phí · cập nhật theo từng nguồn':'API riêng · xem kỳ dữ liệu ở nguồn';
+      document.querySelector('.demo-tag').textContent=label;dom.providerStatus.textContent=label;
+      document.querySelector('.footer-note').textContent='Số liệu phục vụ tham khảo, không phải khuyến nghị mua/bán. Ngày quan sát khác thời điểm tải. Không có nguồn hợp lệ thì không hiển thị giá.';
+      fillTickerBar(state.providerMode==='demo'?DEMO.ticker:['Chỉ số chứng khoán: chưa kết nối nguồn giá']);
+      document.querySelectorAll('.source-line:not(#assetBoardStatus):not(#streamStatus)').forEach(el=>{if(!el.closest('#public-overview,#crypto-history'))el.textContent=state.providerMode==='demo'?'DEMO · không phải số liệu thị trường thật':'Nguồn và kỳ dữ liệu: theo phản hồi provider; chưa kết nối nếu trống.';});
+      document.querySelectorAll('.chip').forEach(el=>{if(/DEMO|realtime/i.test(el.textContent))el.textContent=state.providerMode==='demo'?'DEMO':'Theo nguồn';});
+      $('world-pulse').querySelector('.eyebrow').textContent=state.providerMode==='demo'?'GLOBAL CONTEXT · DEMO':'GLOBAL CONTEXT';
+      ['addSymbol','addAlert'].forEach(id=>$(id).disabled=state.providerMode!=='demo');
+      $('command').disabled=state.providerMode!=='demo';
+    }
+    function provenance(source,unit,cadence) {
+      const status=source?.status||'error',dates=(source?.data||[]).map(x=>x.date).filter(Boolean).sort();
+      const period=dates.length?dates[0]+' → '+dates.at(-1):'N/A';
+      const contributors=[...new Set((source?.data||[]).flatMap(x=>(x.providers||[]).map(p=>typeof p==='string'?p:p.key||p.provider||'')).filter(Boolean))];
+      return '<p class="evidence-source">'+escapeHTML(labels[status]||status)+' · '+escapeHTML(cadence)+' · '+escapeHTML(unit)+' · Kỳ: '+escapeHTML(period)+(source?.sourceUpdatedAt?' · Công bố: '+escapeHTML(source.sourceUpdatedAt):'')+'<br>Tải: '+escapeHTML(dateVN(source?.fetchedAt))+(safeURL(source?.source)?' · <a href="'+escapeHTML(source.source)+'" target="_blank" rel="noopener noreferrer">Dữ liệu nguồn</a>':'')+(contributors.length?' · Nhà cung cấp: '+escapeHTML(contributors.join(', ')):'')+(status==='cache'?' · Không đồng bộ được; giữ nguyên kỳ dữ liệu đã tải.':'')+'</p>';
+    }
+    function evidenceChart(title,series,unit,source,cadence) {
+      const colors=['#1764c0','#a85112','#158073','#a43c60'];
+      const clean=series.map(s=>({...s,points:s.points.filter(p=>validNumber(p.value)&&p.date).sort((a,b)=>a.date.localeCompare(b.date))})).filter(s=>s.points.length);
+      const all=clean.flatMap(s=>s.points),dates=[...new Set(all.map(p=>p.date))].sort();
+      if(!all.length)return '<article class="evidence-chart"><h3>'+escapeHTML(title)+'</h3><div class="evidence-gap">'+(source?.status==='error'?'Không tải được nguồn dữ liệu.':'Chưa có dữ liệu.')+'</div>'+provenance(source,unit,cadence)+'</article>';
+      const annual=dates.every(d=>/^\d{4}$/.test(d)),monthly=dates.every(d=>/^\d{4}-\d{2}$/.test(d)),monthNumber=d=>Number(d.slice(0,4))*12+Number(d.slice(5,7)),time=d=>annual?Number(d):monthly?monthNumber(d):Date.parse(d+'T00:00:00Z');
+      const start=time(dates[0]),end=time(dates.at(-1)),values=all.map(p=>Number(p.value));
+      let min=Math.min(...values),max=Math.max(...values);const padding=(max-min||Math.max(1,Math.abs(max)*.02))*.14;min-=padding;max+=padding;
+      const x=d=>58+(time(d)-start)/(end-start||1)*430,y=v=>20+(max-v)/(max-min)*170;
+      let svg='<svg viewBox="0 0 530 232" role="img" aria-label="'+escapeHTML(title+'; '+unit+'; '+dates[0]+' đến '+dates.at(-1))+ '"><title>'+escapeHTML(title)+'</title>';
+      for(let i=0;i<4;i++){const value=min+(max-min)*i/3,yy=y(value);svg+='<line x1="58" x2="488" y1="'+yy+'" y2="'+yy+'" stroke="#e5e5e9"/><text x="50" y="'+(yy+4)+'" text-anchor="end">'+numberVN(value,Math.abs(value)>100?0:1)+'</text>';}
+      clean.forEach((s,index)=>{
+        let path='',previous=null;
+        s.points.forEach(p=>{const gap=previous&&(annual?Number(p.date)-Number(previous.date)>1:monthly?time(p.date)-time(previous.date)>1:time(p.date)-time(previous.date)>7*86400000);path+=(previous&&!gap?'L':'M')+x(p.date).toFixed(2)+','+y(p.value).toFixed(2)+' ';previous=p;});
+        svg+='<path d="'+path+'" fill="none" stroke="'+colors[index%4]+'" stroke-width="2.6"'+(index?' stroke-dasharray="'+(index===1?'7 4':'2 4')+'"':'')+'/>';
+        s.points.forEach(p=>{svg+='<circle cx="'+x(p.date)+'" cy="'+y(p.value)+'" r="2.8" fill="'+colors[index%4]+'"><title>'+escapeHTML(s.name+' · '+p.date+' · '+numberVN(Number(p.value),4)+' '+unit)+'</title></circle>';});
+      });
+      const tickDates=[dates[0],dates[Math.floor((dates.length-1)/2)],dates.at(-1)];
+      [...new Set(tickDates)].forEach(d=>{svg+='<text x="'+x(d)+'" y="217" text-anchor="middle">'+escapeHTML(d)+'</text>';});svg+='</svg>';
+      const legend='<div class="evidence-legend">'+clean.map((s,i)=>'<span style="--series:'+colors[i%4]+'">'+escapeHTML(s.name)+'</span>').join('')+'</div>';
+      const table='<details><summary>Xem số liệu và các kỳ còn thiếu</summary><div class="evidence-table"><table><thead><tr><th>Kỳ</th>'+clean.map(s=>'<th>'+escapeHTML(s.name)+' ('+escapeHTML(unit)+')</th>').join('')+'</tr></thead><tbody>'+dates.map(d=>'<tr><td>'+escapeHTML(d)+'</td>'+clean.map(s=>'<td>'+numberVN(s.points.find(p=>p.date===d)?.value,4)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div></details>';
+      return '<article class="evidence-chart"><h3>'+escapeHTML(title)+'</h3><p class="evidence-note">'+escapeHTML(unit+' · '+cadence)+'; không nối qua kỳ thiếu dài.</p>'+legend+svg+provenance(source,unit,cadence)+table+'</article>';
+    }
+    function wbSeries(source,countries) {return countries.map(([id,name])=>({name,points:(source.data||[]).filter(p=>p.countryiso3code===id).map(p=>({date:p.date,value:p.value}))}));}
+    function renderPublicPanorama(data) {
+      const countries=[['WLD','Thế giới'],['USA','Mỹ'],['CHN','Trung Quốc']];
+      const fxSeries=(quote,invert=false)=>[{name:invert?'EUR/USD':'USD/VND',points:data.fx.data.filter(p=>p.quote===quote).map(p=>({date:p.date,value:invert?1/p.rate:p.rate}))}];
+      const vnGDP=wbSeries(data.gdp,[['VNM','GDP thực · tăng trưởng']]),vnCPI=wbSeries(data.cpi,[['VNM','CPI · thay đổi năm']]);
+      const latestFDI=data.fdi.data.filter(p=>p.countryiso3code==='VNM').at(-1);
+      $('publicOverviewContent').innerHTML='<section class="evidence-section"><header class="evidence-heading"><h2>01 / Toàn cảnh thế giới</h2><p>Vĩ mô dài hạn trước, diễn biến tiền tệ sau.<br>Không phải chỉ số giá cổ phiếu hay điểm chấm rủi ro.</p></header><div class="evidence-grid">'+
+        evidenceChart('Tăng trưởng kinh tế đang thay đổi thế nào?',wbSeries(data.gdp,countries),'% / năm',data.gdp,'World Bank · theo năm')+
+        evidenceChart('Áp lực lạm phát giữa các nền kinh tế',wbSeries(data.cpi,countries),'% / năm',data.cpi,'World Bank · theo năm')+
+        evidenceChart('EUR/USD · lịch sử tỷ giá tham chiếu',fxSeries('EUR',true),'USD / EUR',data.fx,'Frankfurter · khoảng 180 ngày, điểm theo tuần, điểm theo tuần')+
+        commodityChart('Vàng và dầu · biến động từ cùng tháng gốc',['Gold','Crude oil, Brent','Crude oil, WTI'],true)+'<article class="evidence-chart"><h3>Phạm vi và nguồn dữ liệu</h3><div class="evidence-gap">Chỉ số chứng khoán và lợi suất: chưa kết nối giá. Vàng và dầu: đã có bình quân tháng lưu kèm, chưa có giá cập nhật tự động trong ngày.</div><div class="source-directory"><a href="https://www.worldbank.org/en/research/commodity-markets" target="_blank" rel="noopener noreferrer">Vàng, dầu & hàng hóa · World Bank Pink Sheet</a><p class="evidence-note">Bản công bố tháng đã lưu kèm; xem giá gốc, đơn vị và lịch sử trong Research. Chưa tự tải bản công bố mới.</p><button class="ghost" data-open-workspace="research">Xem tài sản & cấu hình nguồn</button></div></article></div></section>'+
+        '<section class="evidence-section"><header class="evidence-heading"><h2>02 / Việt Nam</h2><p>Tăng trưởng, lạm phát và tỷ giá.<br>Quan sát không đồng nghĩa với quan hệ nhân quả.</p></header><div class="evidence-grid">'+
+        evidenceChart('GDP Việt Nam · tốc độ tăng trưởng thực',vnGDP,'% / năm',data.gdp,'World Bank · theo năm')+
+        evidenceChart('Lạm phát tiêu dùng Việt Nam',vnCPI,'% / năm',data.cpi,'World Bank · theo năm')+
+        evidenceChart('USD/VND · tỷ giá tham chiếu',fxSeries('VND'),'VND / USD',data.fx,'Frankfurter · khoảng 180 ngày')+
+        '<article class="evidence-chart"><h3>FDI · dòng vốn vào ròng</h3><p style="font-size:30px;margin:18px 0">'+(latestFDI?numberVN(latestFDI.value/1e9)+' tỷ USD':'N/A')+'</p><p class="evidence-note">'+(latestFDI?'Kỳ '+escapeHTML(latestFDI.date)+' · ':'')+'Cán cân thanh toán, USD hiện hành. Không phải FDI đăng ký hay giải ngân công bố trong tháng.</p>'+provenance(data.fdi,'USD hiện hành','World Bank · theo năm')+'</article></div><div class="evidence-gap">VN-Index, HNX, UPCoM, dòng tiền và nhóm ngành: chưa kết nối nguồn giá. <button class="ghost" data-open-workspace="market">Mở Vietnam Market</button></div></section>';
+      $('publicOverviewContent').querySelectorAll('[data-open-workspace]').forEach(btn=>btn.onclick=()=>loadWorkspace(btn.dataset.openWorkspace));
+    }
+    function renderCryptoHistory(sources) {
+      $('cryptoHistoryContent').innerHTML='<p class="evidence-note">Giá đóng cửa các nến ngày đã hoàn tất (ngày UTC). Không phải lịch sử chỉ số chứng khoán.</p><div class="evidence-grid">'+sources.map((source,i)=>evidenceChart((i?'ETH':'BTC')+'/USDT · lịch sử 90 nến ngày',[{name:i?'ETH/USDT':'BTC/USDT',points:source.data}], 'USDT',source,'Binance · nến ngày UTC')).join('')+'</div>';
+    }
+    function setupEvidence() {
+      $('world-pulse').insertAdjacentHTML('beforebegin','<section id="public-overview" class="card col-12" data-state="loading"><div id="publicOverviewContent" class="card-content"></div></section>');
+      $('provider').insertAdjacentHTML('beforebegin','<section id="commodity-history" class="card col-12" data-state="loading"><div class="card-header"><h2 class="card-title">Hàng hóa · chu kỳ giá thế giới</h2></div><div id="commodityContent" class="card-content"></div></section>');
+      $('provider').insertAdjacentHTML('beforebegin','<section id="crypto-history" class="card col-12" data-state="loading"><div class="card-header"><h2 class="card-title">Crypto · lịch sử giao dịch</h2></div><div id="cryptoHistoryContent" class="card-content"></div></section>');
+      $('provider').querySelector('.card-body').insertAdjacentHTML('beforeend','<div class="source-directory"><strong>Nguồn miễn phí và độ phủ</strong><a href="https://frankfurter.dev/" target="_blank" rel="noopener noreferrer">Frankfurter · tỷ giá tham chiếu theo ngày</a><a href="https://data.worldbank.org/" target="_blank" rel="noopener noreferrer">World Bank · GDP, CPI, FDI theo năm</a><a href="https://github.com/binance/binance-spot-api-docs/blob/master/faqs/market_data_only.md" target="_blank" rel="noopener noreferrer">Binance · thị trường crypto công khai</a><a href="https://www.worldbank.org/en/research/commodity-markets" target="_blank" rel="noopener noreferrer">World Bank Pink Sheet · vàng, dầu, hàng hóa theo tháng (bản công bố lưu kèm)</a><p>Chưa kết nối tin tức và chứng khoán. Không nhập khóa API ở trình duyệt. Nguồn miễn phí có thể giới hạn truy cập hoặc thay đổi phạm vi.</p></div>');
+      document.querySelectorAll('.grid > section[id]').forEach(card=>{if(card.id==='provider')return;const note=document.createElement('div');note.className='module-status';note.setAttribute('role','status');note.setAttribute('aria-live','polite');card.append(note);});
+      $('retryAll').textContent='Làm mới trang này';
+      document.querySelector('.footer-note').style.order='99';
+    }
+    window.addEventListener('load',async()=>{
+      setupEvidence();setupWorkspaces();setupPanoramaCharts();document.body.classList.remove('compact-mode');
+      syncModeUI();await loadWorkspace('today');
+    });
+
+
+  </script>
+</body>
+</html>
